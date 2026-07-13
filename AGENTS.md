@@ -29,6 +29,7 @@ Lokale App-URL:
 - Urlaubsnotizen verbleiben in AD Urlaub und werden nicht an konsumierende Apps übertragen.
 - App-Root und Tabellenwrapper erfüllen den Nextcloud-Scrollvertrag der Parent-`AGENTS.md`.
 - Modelle nutzen `get(...)`, `get_all([...])` und `toArray()`.
+- Dauerhafte App- und Gruppenfreigaben liegen ausschliesslich im eigenen Tab `Einstellungen`; die Urlaubsplanung bleibt davon als Hauptansicht getrennt.
 
 ## Gemeinsame Suite-Navigation
 

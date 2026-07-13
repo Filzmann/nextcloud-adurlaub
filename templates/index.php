@@ -1,10 +1,13 @@
 <?php
 script('localbase', 'api/api-client');
 script('localbase', 'ui/ui');
+script('orgsuite', 'suite-navigation');
 script('adurlaub', 'main');
 style('adurlaub', 'style');
+style('orgsuite', 'suite-navigation');
 ?>
 <main id="adurlaub-app" class="adu-app">
+    <div class="orgsuite-host" data-orgsuite data-suite="ad" data-current-app="adurlaub"></div>
     <header class="adu-header">
         <h1>AD Urlaub</h1>
         <div class="adu-controls">

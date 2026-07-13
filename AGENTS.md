@@ -30,6 +30,12 @@ Lokale App-URL:
 - App-Root und Tabellenwrapper erfüllen den Nextcloud-Scrollvertrag der Parent-`AGENTS.md`.
 - Modelle nutzen `get(...)`, `get_all([...])` und `toArray()`.
 
+## Gemeinsame Suite-Navigation
+
+- AD Urlaub besitzt keinen eigenen Nextcloud-Hauptnavigationseintrag. `orgsuite` stellt den gemeinsamen Einstieg `AD` bereit.
+- Das Template bindet das zentrale OrgSuite-Menue mit `data-suite="ad"` und `data-current-app="adurlaub"` ein.
+- Urlaubs-, Team- und Genehmigungsrechte bleiben ausschliesslich serverseitig im AD Urlaub; Menuesichtbarkeit ist keine Berechtigung.
+
 ## Git und Tests
 
 - Eigenständiges Git-Repository; gezielt stagen, nie `git add .`.

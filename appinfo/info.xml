@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<info xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
+    <id>adurlaub</id>
+    <name>AD Urlaub</name>
+    <summary>Urlaubsplanung für alle AD-Fachgruppen.</summary>
+    <description>Plant und genehmigt ganztägige Urlaubszeiträume und stellt sie anderen lokalen Apps read-only bereit.</description>
+    <version>0.1.0</version>
+    <licence>agpl</licence>
+    <author>Simon / Codex-Prototyp</author>
+    <namespace>AdUrlaub</namespace>
+    <category>organization</category>
+    <dependencies><nextcloud min-version="29" max-version="35"/></dependencies>
+    <commands><command>OCA\AdUrlaub\Command\SeedDemoCommand</command></commands>
+    <navigations>
+        <navigation><name>AD Urlaub</name><route>adurlaub.page.index</route><icon>app.svg</icon><order>82</order></navigation>
+    </navigations>
+</info>

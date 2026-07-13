@@ -1,0 +1,42 @@
+(function () {
+    'use strict';
+    const client = new window.LocalBase.api.ApiClient({ appId: 'adurlaub', errorMessage: (data, status) => data?.error || `HTTP ${status}` });
+    const notice = new window.LocalBase.ui.Notice('adu-notice', { baseClass: 'adu-notice', typeClassPrefix: 'adu-notice--' });
+    const elements = Object.fromEntries(['week-label','week-number','calendar-head','calendar-body','dialog','form','id','employee','start-date','end-date','status','note','delete','conflicts','settings','settings-form','peer-settings'].map(id => [id, document.getElementById(`adu-${id}`)]));
+    let monday = startOfWeek(new Date()); let data = null;
+
+    function startOfWeek(value) { const result = new Date(value); const day = result.getDay() || 7; result.setDate(result.getDate() - day + 1); result.setHours(0,0,0,0); return result; }
+    function isoDay(value) { return `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2,'0')}-${String(value.getDate()).padStart(2,'0')}`; }
+    function isoWeekValue(date) { const value = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())); const day = value.getUTCDay() || 7; value.setUTCDate(value.getUTCDate() + 4 - day); const yearStart = new Date(Date.UTC(value.getUTCFullYear(),0,1)); return `${value.getUTCFullYear()}-W${String(Math.ceil((((value-yearStart)/86400000)+1)/7)).padStart(2,'0')}`; }
+    function days() { return Array.from({length: 7}, (_, index) => { const day = new Date(monday); day.setDate(day.getDate() + index); return day; }); }
+    function node(tag, text, className) { const result = document.createElement(tag); if (text !== undefined) result.textContent = text; if (className) result.className = className; return result; }
+    function vacationsFor(uid, day) { const date = isoDay(day); return data.vacations.filter(item => item.employeeUid === uid && item.startDate <= date && item.endDate >= date); }
+
+    function render() {
+        const dates = days(); const head = document.createElement('tr'); head.append(node('th','Mitarbeiter*in'));
+        for (const day of dates) head.append(node('th', day.toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'})));
+        elements['calendar-head'].replaceChildren(head);
+        elements['calendar-body'].replaceChildren(...data.employees.map(employee => {
+            const row = document.createElement('tr'); row.dataset.employeeUid = employee.uid; const name = node('th', employee.displayName); name.scope = 'row'; row.append(name);
+            for (const day of dates) { const cell = document.createElement('td'); cell.dataset.day = isoDay(day); const items = vacationsFor(employee.uid, day);
+                for (const vacation of items) { const button = node(vacation.canManage ? 'button' : 'span', vacation.marker, `adu-marker adu-marker--${vacation.status}`); button.title = vacation.status === 'approved' ? 'Genehmigter Urlaub – blockiert Kalenderzeiten' : 'Geplanter Urlaub – Hinweis ohne Blockade'; if (vacation.canManage) { button.type = 'button'; button.dataset.action = 'edit'; button.dataset.id = String(vacation.id); } cell.append(button); }
+                if (employee.canManage && !items.length) { const add = node('button','+', 'adu-icon-button adu-add'); add.type = 'button'; add.dataset.action = 'add'; add.title = 'Urlaub eintragen'; add.setAttribute('aria-label', `${employee.displayName}: Urlaub am ${day.toLocaleDateString('de-DE')} eintragen`); cell.append(add); } row.append(cell); }
+            return row;
+        }));
+    }
+
+    function openDialog(employee, date, vacation = null) { elements.id.value = vacation?.id || ''; elements.employee.replaceChildren(...data.employees.filter(item => item.canManage).map(item => { const option = node('option', item.displayName); option.value = item.uid; return option; })); elements.employee.value = employee.uid; elements['start-date'].value = vacation?.startDate || date; elements['end-date'].value = vacation?.endDate || date; elements.status.value = vacation?.status || 'planned'; elements.note.value = vacation?.note || ''; elements.status.querySelector('option[value="approved"]').disabled = !employee.canApprove; elements.delete.hidden = !vacation; elements.conflicts.hidden = true; elements.conflicts.replaceChildren(); elements.dialog.showModal(); }
+    function closeDialog() { elements.dialog.close(); }
+    async function load() { const sunday = new Date(monday); sunday.setDate(sunday.getDate()+6); elements['week-label'].textContent = `${monday.toLocaleDateString('de-DE')} – ${sunday.toLocaleDateString('de-DE')}`; elements['week-number'].value = isoWeekValue(monday); try { data = await client.request(`/api/week?start=${client.encode(isoDay(monday))}`); render(); notice.clear(); } catch (error) { notice.error(error); } }
+    async function loadSettings() { try { const settings = await client.request('/api/settings'); elements.settings.hidden = false; elements['peer-settings'].replaceChildren(...Object.entries(settings.peerApproval).map(([group,enabled]) => { const label = node('label'); const input = document.createElement('input'); input.type = 'checkbox'; input.name = group; input.checked = enabled; label.append(input,document.createTextNode(` ${group}`)); return label; })); } catch (_) {} }
+
+    document.getElementById('adu-previous-week').addEventListener('click', () => { monday.setDate(monday.getDate()-7); load(); });
+    document.getElementById('adu-next-week').addEventListener('click', () => { monday.setDate(monday.getDate()+7); load(); });
+    elements['week-number'].addEventListener('change', event => { if (!event.target.value) return; const [year,week] = event.target.value.split('-W').map(Number); const fourth = new Date(year,0,4); monday = startOfWeek(fourth); monday.setDate(monday.getDate()+(week-1)*7); load(); });
+    elements['calendar-body'].addEventListener('click', event => { const button = event.target instanceof Element ? event.target.closest('button[data-action]') : null; if (!button) return; const row = button.closest('tr[data-employee-uid]'); const employee = data.employees.find(item => item.uid === row?.dataset.employeeUid); if (!employee?.canManage) return; if (button.dataset.action === 'add') openDialog(employee, button.closest('td').dataset.day); else { const vacation = data.vacations.find(item => item.id === Number(button.dataset.id)); if (vacation) openDialog(employee, vacation.startDate, vacation); } });
+    elements.form.addEventListener('submit', async event => { event.preventDefault(); const payload = {employeeUid: elements.employee.value,startDate: elements['start-date'].value,endDate: elements['end-date'].value,status: elements.status.value,note: elements.note.value}; try { const id = elements.id.value; await client.request(id ? `/api/vacations/${id}` : '/api/vacations', {method: id ? 'PUT' : 'POST', body: JSON.stringify(payload)}); closeDialog(); await load(); notice.success('Urlaub gespeichert.'); } catch (error) { if (error.status === 409 && error.data?.conflicts) { elements.conflicts.hidden = false; elements.conflicts.replaceChildren(node('strong','Genehmigung nicht möglich:'),...error.data.conflicts.map(conflict => node('div',`${conflict.type === 'shift' ? 'Dienst' : 'Termin'} ${new Date(conflict.start).toLocaleString('de-DE')}–${new Date(conflict.end).toLocaleString('de-DE')}${conflict.label ? ` · ${conflict.label}` : ''}`))); } notice.error(error); } });
+    elements.delete.addEventListener('click', async () => { if (!elements.id.value || !window.confirm('Urlaub wirklich löschen?')) return; try { await client.request(`/api/vacations/${client.encode(elements.id.value)}`,{method:'DELETE',body:'{}'}); closeDialog(); await load(); notice.success('Urlaub gelöscht.'); } catch (error) { notice.error(error); } });
+    elements['settings-form'].addEventListener('submit', async event => { event.preventDefault(); const peerApproval = Object.fromEntries([...elements['peer-settings'].querySelectorAll('input')].map(input => [input.name,input.checked])); try { await client.request('/api/settings',{method:'PUT',body:JSON.stringify({peerApproval})}); notice.success('Freigaben gespeichert.'); } catch (error) { notice.error(error); } });
+    document.getElementById('adu-dialog-close').addEventListener('click', closeDialog); document.getElementById('adu-dialog-cancel').addEventListener('click', closeDialog);
+    load(); loadSettings();
+}());

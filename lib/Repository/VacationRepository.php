@@ -1,0 +1,51 @@
+<?php
+
+declare(strict_types=1);
+
+namespace OCA\AdUrlaub\Repository;
+
+use DateTimeImmutable;
+use DateTimeZone;
+use OCA\AdUrlaub\Model\Vacation;
+use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\IDBConnection;
+
+/** Zweck: Kapselt gebundene Zugriffe auf die app-eigene Urlaubstabelle. */
+final class VacationRepository {
+    public function __construct(private IDBConnection $db) {}
+
+    /** @return list<Vacation> */
+    public function findRange(string $startDate, string $endDate, array $employeeUids): array {
+        if ($employeeUids === []) return [];
+        $qb = $this->db->getQueryBuilder();
+        $qb->select('id', 'employee_uid', 'start_date', 'end_date', 'status', 'note')->from('adu_vacations')
+            ->where($qb->expr()->lte('start_date', $qb->createNamedParameter($endDate)))
+            ->andWhere($qb->expr()->gte('end_date', $qb->createNamedParameter($startDate)))
+            ->andWhere($qb->expr()->in('employee_uid', $qb->createNamedParameter(array_values($employeeUids), IQueryBuilder::PARAM_STR_ARRAY)))
+            ->orderBy('start_date', 'ASC');
+        return Vacation::get_all(array_map([$this, 'mapRow'], $qb->executeQuery()->fetchAllAssociative()));
+    }
+
+    public function find(int $id): ?Vacation {
+        $qb = $this->db->getQueryBuilder();
+        $qb->select('id', 'employee_uid', 'start_date', 'end_date', 'status', 'note')->from('adu_vacations')->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
+        $row = $qb->executeQuery()->fetchAssociative();
+        return $row === false ? null : Vacation::get($this->mapRow($row));
+    }
+
+    public function save(Vacation $vacation, string $actorUid): int {
+        $now = new DateTimeImmutable('now', new DateTimeZone('UTC'));
+        $values = ['employee_uid' => $vacation->employeeUid(), 'start_date' => $vacation->startDate(), 'end_date' => $vacation->endDate(), 'status' => $vacation->status(), 'note' => $vacation->note(), 'updated_at' => $now];
+        $types = ['employee_uid' => IQueryBuilder::PARAM_STR, 'start_date' => IQueryBuilder::PARAM_STR, 'end_date' => IQueryBuilder::PARAM_STR, 'status' => IQueryBuilder::PARAM_STR, 'note' => IQueryBuilder::PARAM_STR, 'updated_at' => IQueryBuilder::PARAM_DATETIME_IMMUTABLE];
+        $qb = $this->db->getQueryBuilder(); $insert = $vacation->id() === null;
+        if ($insert) { $qb->insert('adu_vacations'); $values += ['created_by_uid' => $actorUid, 'created_at' => $now]; $types += ['created_by_uid' => IQueryBuilder::PARAM_STR, 'created_at' => IQueryBuilder::PARAM_DATETIME_IMMUTABLE]; }
+        else $qb->update('adu_vacations')->where($qb->expr()->eq('id', $qb->createNamedParameter($vacation->id(), IQueryBuilder::PARAM_INT)));
+        foreach ($values as $field => $value) { $parameter = $qb->createNamedParameter($value, $types[$field]); if ($insert) $qb->setValue($field, $parameter); else $qb->set($field, $parameter); }
+        $qb->executeStatement();
+        return $vacation->id() ?? (int)$this->db->lastInsertId('adu_vacations');
+    }
+
+    public function delete(int $id): void { $qb = $this->db->getQueryBuilder(); $qb->delete('adu_vacations')->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)))->executeStatement(); }
+    public function existsForEmployee(string $employeeUid): bool { $qb = $this->db->getQueryBuilder(); $qb->select('id')->from('adu_vacations')->where($qb->expr()->eq('employee_uid', $qb->createNamedParameter($employeeUid)))->setMaxResults(1); return $qb->executeQuery()->fetchOne() !== false; }
+    private function mapRow(array $row): array { return ['id' => (int)$row['id'], 'employeeUid' => (string)$row['employee_uid'], 'startDate' => (string)$row['start_date'], 'endDate' => (string)$row['end_date'], 'status' => (string)$row['status'], 'note' => (string)$row['note']]; }
+}

@@ -16,11 +16,7 @@ style('orgsuite', 'suite-navigation');
         </div>
     </header>
     <div id="adu-notice" role="status" aria-live="polite"></div>
-    <nav class="adu-tabs" role="tablist" aria-label="Urlaubsplaner Bereiche">
-        <button type="button" id="adu-tab-calendar" role="tab" aria-controls="adu-calendar-view" aria-selected="true">Urlaubsplan</button>
-        <button type="button" id="adu-tab-settings" role="tab" aria-controls="adu-settings-view" aria-selected="false" hidden>Einstellungen</button>
-    </nav>
-    <section id="adu-calendar-view" class="adu-section" role="tabpanel" aria-labelledby="adu-tab-calendar">
+    <section id="adu-calendar-view" class="adu-section" aria-labelledby="adu-plan-title">
         <header class="adu-section-head">
             <h2 id="adu-plan-title">Urlaubsplan</h2>
             <p class="adu-legend"><span class="adu-request adu-request-planned">U?</span> geplant, Hinweis <span class="adu-request adu-request-approved">U</span> genehmigt, blockiert Kalenderzeiten</p>
@@ -40,10 +36,5 @@ style('orgsuite', 'suite-navigation');
                 <tbody id="adu-calendar-body"><tr><td>Daten werden geladen.</td></tr></tbody>
             </table>
         </div>
-    </section>
-    <section id="adu-settings-view" class="adu-section adu-settings-view" role="tabpanel" aria-labelledby="adu-tab-settings" hidden>
-        <h2>Genehmigungen durch direkte Kolleg*innen</h2>
-        <p>Hier können zusätzliche Genehmigungsrechte innerhalb derselben Fachgruppe freigeschaltet werden.</p>
-        <form id="adu-settings-form"><div id="adu-peer-settings"></div><button type="submit">Freigaben speichern</button></form>
     </section>
 </main>

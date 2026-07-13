@@ -15,4 +15,5 @@ foreach (['$team->contains($employeeUid)', 'canManageStatus($employeeUid,$existi
 if (!str_contains($controller, "isVisibleEmployee(\$payload['employeeUid'])")) throw new RuntimeException('Schreibzugriff ist nicht auf sichtbare AD-Personen begrenzt.');
 if (!str_contains($controller, 'isVisibleEmployee($vacation->employeeUid())')) throw new RuntimeException('Löschzugriff ist nicht auf sichtbare AD-Personen begrenzt.');
 if (!str_contains($controller, 'isVisibleEmployee($existing->employeeUid())') || !str_contains($controller, 'isVisibleEmployee($employeeUid)')) throw new RuntimeException('Änderungszugriff ist nicht auf sichtbare AD-Personen begrenzt.');
+if (substr_count($controller, 'catch (VacationOverlapException $error)') < 2 || substr_count($controller, 'Http::STATUS_CONFLICT') < 4) throw new RuntimeException('Überschneidende Urlaube erhalten keinen klaren Konfliktstatus.');
 echo "SecuritySmokeTest: OK\n";

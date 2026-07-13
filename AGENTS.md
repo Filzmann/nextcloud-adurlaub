@@ -11,6 +11,7 @@ Lokale App-URL:
 ## Fachvertrag
 
 - Urlaube sind ganztägige, inklusive Datumsbereiche je Nextcloud-UID.
+- Urlaubszeiträume derselben Person dürfen sich unabhängig vom Status nicht überschneiden. Bei Änderungen wird der bearbeitete Datensatz selbst von der Prüfung ausgenommen; angrenzende Zeiträume bleiben erlaubt.
 - `planned` wird als `U?` angezeigt und ist ein Hinweis ohne Schreib- oder Verfügbarkeitsblockade.
 - `approved` wird als `U` angezeigt und blockiert Dienste, Termine, Standarddienste und Meetingverfügbarkeit im AD Kalender.
 - Normale Nutzer*innen lesen nur Urlaubsansichten, in denen sie selbst Mitglied sind, gemeinsame Assistenzteams sowie Ansichten mit direkt oder indirekt unterstellten Personen. Bereichsgrenzen bleiben wirksam; Nextcloud-Admins sehen alle Ansichten.
@@ -32,7 +33,7 @@ Lokale App-URL:
 - Urlaubsnotizen verbleiben in AD Urlaub und werden nicht an konsumierende Apps übertragen.
 - App-Root und Tabellenwrapper erfüllen den Nextcloud-Scrollvertrag der Parent-`AGENTS.md`.
 - Modelle nutzen `get(...)`, `get_all([...])` und `toArray()`.
-- Dauerhafte App- und Gruppenfreigaben liegen ausschliesslich im eigenen Tab `Einstellungen`; die Urlaubsplanung bleibt davon als Hauptansicht getrennt.
+- Organisationsweite Gruppen- und Genehmigungsfreigaben liegen ausschließlich im Nextcloud-Adminbereich der OrgSuite. AD Urlaub besitzt derzeit keine persönlichen Dauer-Einstellungen und deshalb keinen leeren Einstellungstab.
 
 ## Gemeinsame Suite-Navigation
 

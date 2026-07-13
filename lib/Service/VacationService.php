@@ -8,6 +8,7 @@ use DateTimeImmutable;
 use InvalidArgumentException;
 use DateTimeZone;
 use OCA\AdUrlaub\Exception\VacationConflictException;
+use OCA\AdUrlaub\Exception\VacationOverlapException;
 use OCA\AdUrlaub\Model\Vacation;
 use OCA\AdUrlaub\Model\VacationTeam;
 use OCA\AdUrlaub\Repository\VacationRepository;
@@ -35,7 +36,15 @@ final class VacationService {
     }
     public function existing(int $id): Vacation { return $this->vacations->find($id) ?? throw new InvalidArgumentException('Urlaub nicht gefunden.'); }
     public function existingCovering(string $employeeUid, string $date): ?Vacation { return $this->vacations->findCoveringDate($employeeUid, $date); }
-    public function save(array $payload, ?int $id, string $actorUid): int { if ($id !== null) $payload['id'] = $id; $vacation = Vacation::get($payload); if ($vacation->status() === Vacation::STATUS_APPROVED) $this->assertNoScheduleConflicts($vacation); return $this->vacations->save($vacation, $actorUid); }
+    public function save(array $payload, ?int $id, string $actorUid): int {
+        if ($id !== null) $payload['id'] = $id;
+        $vacation = Vacation::get($payload);
+        if ($this->vacations->hasOverlap($vacation->employeeUid(), $vacation->startDate(), $vacation->endDate(), $vacation->id())) {
+            throw new VacationOverlapException();
+        }
+        if ($vacation->status() === Vacation::STATUS_APPROVED) $this->assertNoScheduleConflicts($vacation);
+        return $this->vacations->save($vacation, $actorUid);
+    }
     public function delete(int $id): void { $this->vacations->delete($id); }
     public function setStatusForDate(string $employeeUid, string $date, string $status, string $actorUid): int {
         $existing = $this->vacations->findCoveringDate($employeeUid, $date);

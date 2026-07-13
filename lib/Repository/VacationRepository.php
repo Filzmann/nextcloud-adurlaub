@@ -44,6 +44,19 @@ final class VacationRepository {
         return $row === false ? null : Vacation::get($this->mapRow($row));
     }
 
+    public function hasOverlap(string $employeeUid, string $startDate, string $endDate, ?int $excludeId = null): bool {
+        $qb = $this->db->getQueryBuilder();
+        $qb->select('id')->from('adu_vacations')
+            ->where($qb->expr()->eq('employee_uid', $qb->createNamedParameter($employeeUid)))
+            ->andWhere($qb->expr()->lte('start_date', $qb->createNamedParameter($endDate)))
+            ->andWhere($qb->expr()->gte('end_date', $qb->createNamedParameter($startDate)))
+            ->setMaxResults(1);
+        if ($excludeId !== null) {
+            $qb->andWhere($qb->expr()->neq('id', $qb->createNamedParameter($excludeId, IQueryBuilder::PARAM_INT)));
+        }
+        return $qb->executeQuery()->fetchOne() !== false;
+    }
+
     public function save(Vacation $vacation, string $actorUid): int {
         $now = new DateTimeImmutable('now', new DateTimeZone('UTC'));
         $values = ['employee_uid' => $vacation->employeeUid(), 'start_date' => $vacation->startDate(), 'end_date' => $vacation->endDate(), 'status' => $vacation->status(), 'note' => $vacation->note(), 'updated_at' => $now];

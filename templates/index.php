@@ -6,24 +6,34 @@ style('adurlaub', 'style');
 ?>
 <main id="adurlaub-app" class="adu-app">
     <header class="adu-header">
-        <div><h1>AD Urlaub</h1><p>Urlaubsplanung für alle Fachgruppen</p></div>
-        <nav aria-label="Kalenderwoche" class="adu-navigation">
-            <button type="button" id="adu-previous-week">Vorherige Woche</button>
-            <output id="adu-week-label" aria-live="polite"></output>
-            <label>KW <input id="adu-week-number" type="week"></label>
-            <button type="button" id="adu-next-week">Nächste Woche</button>
-        </nav>
+        <h1>AD Urlaub</h1>
+        <div class="adu-controls">
+            <label>Team <select id="adu-team"></select></label>
+            <label>Jahr <input id="adu-year" type="number" min="2000" max="2100" step="1"></label>
+        </div>
     </header>
     <div id="adu-notice" role="status" aria-live="polite"></div>
-    <p class="adu-legend"><span class="adu-marker adu-marker--planned">U?</span> geplant, Hinweis ohne Blockade <span class="adu-marker adu-marker--approved">U</span> genehmigt, blockiert Kalenderzeiten</p>
+    <section class="adu-section" aria-labelledby="adu-plan-title">
+        <header class="adu-section-head">
+            <h2 id="adu-plan-title">Urlaubsplan</h2>
+            <p class="adu-legend"><span class="adu-request adu-request-planned">U?</span> geplant, Hinweis <span class="adu-request adu-request-approved">U</span> genehmigt, blockiert Kalenderzeiten</p>
+        </header>
+        <form id="adu-own-form" class="adu-vacation-form">
+            <label>Von <input name="startDate" type="date" required></label>
+            <label>Bis <input name="endDate" type="date" required></label>
+            <label>Notiz <input name="note" type="text" maxlength="500"></label>
+            <button type="submit">Eintragen</button>
+        </form>
+        <div id="adu-own-requests" class="adu-request-list" aria-label="Meine Urlaubsanträge"></div>
+        <div class="adu-table-wrap adu-year-wrap">
+            <table class="adu-table adu-year-table">
+                <caption>Jahresurlaub nach Team und Mitarbeiter*in</caption>
+                <thead id="adu-calendar-head"></thead>
+                <tbody id="adu-calendar-body"><tr><td>Daten werden geladen.</td></tr></tbody>
+            </table>
+        </div>
+    </section>
     <details id="adu-settings" class="adu-settings" hidden><summary>Genehmigungen durch direkte Kolleg*innen</summary><form id="adu-settings-form"><div id="adu-peer-settings"></div><button type="submit">Freigaben speichern</button></form></details>
-    <div class="adu-table-wrap">
-        <table class="adu-calendar">
-            <caption>Urlaub je Mitarbeiter*in und Tag</caption>
-            <thead id="adu-calendar-head"></thead>
-            <tbody id="adu-calendar-body"><tr><td>Daten werden geladen.</td></tr></tbody>
-        </table>
-    </div>
     <dialog id="adu-dialog" class="adu-dialog" aria-labelledby="adu-dialog-title">
         <form id="adu-form">
             <header><h2 id="adu-dialog-title">Urlaub eintragen</h2><button type="button" id="adu-dialog-close" class="adu-icon-button" aria-label="Dialog schließen" title="Schließen">×</button></header>

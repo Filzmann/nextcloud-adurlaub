@@ -17,6 +17,8 @@ Lokale App-URL:
 - Nutzer*innen planen eigene Urlaube. Genehmigungen und die Bearbeitung genehmigter Urlaube folgen derselben Vorgesetztenhierarchie wie AD Kalender; Nextcloud-Admins dürfen alle verwalten. Direkte Kolleg*innen dürfen nach administrativer Freischaltung innerhalb derselben Fachgruppe genehmigen, bei BO/EB nur im selben Bürobereich. Eigene Genehmigung bleibt außer für Nextcloud-Admins gesperrt.
 - Genehmigungen mit überschneidenden Diensten oder Terminen werden mit einer read-only Konfliktliste abgelehnt; es erfolgt keine automatische Löschung.
 - Gruppen stammen aus demselben kanonischen Vertrag wie AD Kalender und AdPlaner: Fachrollen `ad-*` und getrennte Bereiche `ad-Bereich-*`; keine kombinierten Altgruppen als Datenquelle.
+- AD Urlaub ist die kanonische schreibende Urlaubsquelle. Die Jahresmatrix fasst dynamische ASN-Teams (`ad-ASN-<Code>`, optional `-Urlaub`) und die Organisationssichten Büro NOW, Büro Süd, PFK sowie Stab/Geschäftsführung/Leitung zusammen.
+- AdPlaner bindet seine Urlaubssicht an diese Quelle an. Seine bisherige Tabelle bleibt bis zu einer bewusst freigegebenen Bereinigung ausschließlich als Rückbaureserve bestehen; `adurlaub:import-adplaner` importiert idempotent.
 - Der read-only Cross-App-Vertrag ist `OCA\LocalBase\Calendar\AbsenceQueryEvent` mit `AbsenceInterval`. AD Urlaub greift niemals direkt auf Tabellen anderer Apps zu.
 
 ## Architektur und Sicherheit

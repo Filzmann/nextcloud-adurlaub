@@ -1,12 +1,12 @@
 <?php
-script('localbase', 'api/api-client');
-script('localbase', 'ui/ui');
-script('orgsuite', 'suite-navigation');
-script('adurlaub', 'components/vacation-plan');
-script('adurlaub', 'modules/vacation-app');
-script('adurlaub', 'main');
-style('adurlaub', 'style');
-style('orgsuite', 'suite-navigation');
+\OCP\Util::addScript('localbase', 'api/api-client');
+\OCP\Util::addScript('localbase', 'ui/ui');
+\OCP\Util::addScript('orgsuite', 'suite-navigation');
+\OCP\Util::addScript('adurlaub', 'components/vacation-plan');
+\OCP\Util::addScript('adurlaub', 'modules/vacation-app');
+\OCP\Util::addScript('adurlaub', 'main');
+\OCP\Util::addStyle('adurlaub', 'style');
+\OCP\Util::addStyle('orgsuite', 'suite-navigation');
 ?>
 <main id="adurlaub-app" class="adu-app">
     <div class="orgsuite-host" data-orgsuite data-suite="ad" data-current-app="adurlaub"></div>

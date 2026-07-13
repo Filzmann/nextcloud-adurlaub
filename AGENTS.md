@@ -13,7 +13,7 @@ Lokale App-URL:
 - Urlaube sind ganztägige, inklusive Datumsbereiche je Nextcloud-UID.
 - `planned` wird als `U?` angezeigt und ist ein Hinweis ohne Schreib- oder Verfügbarkeitsblockade.
 - `approved` wird als `U` angezeigt und blockiert Dienste, Termine, Standarddienste und Meetingverfügbarkeit im AD Kalender.
-- Alle angemeldeten Nutzer*innen lesen alle Urlaube der gemeinsamen AD-Fachgruppen.
+- Normale Nutzer*innen lesen nur Urlaubsansichten, in denen sie selbst Mitglied sind, gemeinsame Assistenzteams sowie Ansichten mit direkt oder indirekt unterstellten Personen. Bereichsgrenzen bleiben wirksam; Nextcloud-Admins sehen alle Ansichten.
 - Nutzer*innen planen eigene Urlaube. Genehmigungen und die Bearbeitung genehmigter Urlaube folgen derselben Vorgesetztenhierarchie wie AD Kalender; Nextcloud-Admins dürfen alle verwalten. Direkte Kolleg*innen dürfen nach administrativer Freischaltung innerhalb derselben Fachgruppe genehmigen, bei BO/EB nur im selben Bürobereich. Eigene Genehmigung bleibt außer für Nextcloud-Admins gesperrt.
 - Genehmigungen mit überschneidenden Diensten oder Terminen werden mit einer read-only Konfliktliste abgelehnt; es erfolgt keine automatische Löschung.
 - Gruppen stammen aus derselben konfigurierbaren `AdOrganizationDefinition` wie AD Kalender und AdPlaner. Fachrollen, Bereiche, Assistenzteam-Präfix und Organisationssichten werden nicht zusätzlich in AD Urlaub festverdrahtet.
@@ -28,6 +28,7 @@ Lokale App-URL:
 
 - Controller bleiben dünn; Rechte liegen in `VacationAccessService`, Fachlogik in `VacationService`, Datenzugriff im Repository.
 - Jeder schreibende API-Pfad prüft serverseitig Zielperson und Besitz/Adminrecht. UI-Ausblendungen sind kein Schutz.
+- Auch lesende Team-, Jahres- und Wochenendpunkte liefern nur den durch `VacationVisibilityPolicy` erlaubten Personen- und Ansichtsausschnitt; direkte Requests auf andere Teams bleiben gesperrt.
 - Urlaubsnotizen verbleiben in AD Urlaub und werden nicht an konsumierende Apps übertragen.
 - App-Root und Tabellenwrapper erfüllen den Nextcloud-Scrollvertrag der Parent-`AGENTS.md`.
 - Modelle nutzen `get(...)`, `get_all([...])` und `toArray()`.

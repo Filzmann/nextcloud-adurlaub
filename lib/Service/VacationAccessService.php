@@ -12,17 +12,26 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
 
-/** Zweck: Erzwingt Sichtbarkeit aller AD-Gruppen und minimale eigene/Admin-Schreibrechte. */
+/** Zweck: Erzwingt Mitgliedschafts-/Hierarchiesicht sowie eigene, Leitungs- und freigeschaltete Peer-Schreibrechte. */
 final class VacationAccessService {
-    public function __construct(private IGroupManager $groups, private IUserSession $session, private IUserManager $users, private AdOrganizationPermissionPolicy $policy, private VacationSettingsService $settings, private ?AdOrganizationSettingsService $organization = null) {}
+    public function __construct(private IGroupManager $groups, private IUserSession $session, private IUserManager $users, private AdOrganizationPermissionPolicy $policy, private VacationVisibilityPolicy $visibility, private VacationSettingsService $settings, private ?AdOrganizationSettingsService $organization = null) {}
     public function currentUser(): ?IUser { return $this->session->getUser(); }
     public function canView(): bool { return $this->currentUser() !== null; }
     public function canManage(string $employeeUid): bool { return $this->decide($employeeUid, true); }
     public function canApprove(string $employeeUid): bool { return $this->decide($employeeUid, false); }
     public function canManageStatus(string $employeeUid, string $status): bool { return $status === 'approved' ? $this->canApprove($employeeUid) : $this->canManage($employeeUid); }
-    public function isVisibleEmployee(string $employeeUid): bool { return in_array($employeeUid, array_column($this->visibleEmployees(), 'uid'), true); }
+    public function isVisibleEmployee(string $employeeUid): bool {
+        $actor = $this->currentUser();
+        $target = $this->users->get($employeeUid);
+        if ($actor === null || $target === null) return false;
+        return $this->visibility->canView($actor->getUID(), $this->groups->isAdmin($actor->getUID()), $this->groupIds($actor), $target->getUID(), $this->groupIds($target));
+    }
     /** @return list<array{uid:string,displayName:string,roles:list<string>,areas:list<string>,canManage:bool}> */
     public function visibleEmployees(): array {
+        $actor = $this->currentUser();
+        if ($actor === null) return [];
+        $actorGroups = $this->groupIds($actor);
+        $isAdmin = $this->groups->isAdmin($actor->getUID());
         $users = [];
         $definition = $this->definition();
         $roleGroups = $definition->roleGroupIds();
@@ -41,6 +50,7 @@ final class VacationAccessService {
         $result = [];
         foreach ($users as $user) {
             $ids = array_map('strval', $this->groups->getUserGroupIds($user));
+            if (!$this->visibility->canView($actor->getUID(), $isAdmin, $actorGroups, $user->getUID(), $ids)) continue;
             $roles = array_values(array_intersect($roleGroups, $ids));
             $hasAreaRole = array_filter($roles, $definition->roleIsAreaScopedByGroup(...)) !== [];
             $areas = $hasAreaRole ? array_values(array_intersect($definition->areaGroupIds(), $ids)) : [];

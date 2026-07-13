@@ -20,7 +20,15 @@
     }
 
     function renderChrome() {
-        elements.team.replaceChildren(...state.teams.map(team => { const option = node('option', team.displayName); option.value = team.id; option.selected = team.id === state.teamId; return option; }));
+        const categories = [
+            ['asn', 'Assistenzteams'],
+            ['organization', 'Büros und Fachgruppen'],
+        ];
+        elements.team.replaceChildren(...categories.map(([category, label]) => {
+            const group = document.createElement('optgroup'); group.label = label;
+            group.append(...state.teams.filter(team => team.category === category).map(team => { const option = node('option', team.displayName); option.value = team.id; option.selected = team.id === state.teamId; return option; }));
+            return group;
+        }).filter(group => group.children.length));
         elements.year.value = String(state.year);
         const team = selectedTeam(); document.getElementById('adu-plan-title').textContent = team ? `${team.displayName} – Urlaub ${state.year}` : `Urlaub ${state.year}`;
     }

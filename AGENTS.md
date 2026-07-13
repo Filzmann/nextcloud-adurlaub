@@ -33,6 +33,7 @@ Lokale App-URL:
 - Urlaubsnotizen verbleiben in AD Urlaub und werden nicht an konsumierende Apps übertragen.
 - App-Root und Tabellenwrapper erfüllen den Nextcloud-Scrollvertrag der Parent-`AGENTS.md`.
 - Modelle nutzen `get(...)`, `get_all([...])` und `toArray()`.
+- Im Frontend bleibt `main.js` ein schlanker Bootstrap. `VacationApp` orchestriert API, Zustand und Ereignisse; `VacationPlan` rendert Teamauswahl, Jahresmatrix, eigene Anträge und Konflikte ohne eigene API-Zugriffe.
 - Organisationsweite Gruppen- und Genehmigungsfreigaben liegen ausschließlich im Nextcloud-Adminbereich der OrgSuite. AD Urlaub besitzt derzeit keine persönlichen Dauer-Einstellungen und deshalb keinen leeren Einstellungstab.
 
 ## Gemeinsame Suite-Navigation

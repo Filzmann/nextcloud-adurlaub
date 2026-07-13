@@ -2,6 +2,8 @@
 script('localbase', 'api/api-client');
 script('localbase', 'ui/ui');
 script('orgsuite', 'suite-navigation');
+script('adurlaub', 'components/vacation-plan');
+script('adurlaub', 'modules/vacation-app');
 script('adurlaub', 'main');
 style('adurlaub', 'style');
 style('orgsuite', 'suite-navigation');

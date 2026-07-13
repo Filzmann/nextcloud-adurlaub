@@ -18,7 +18,7 @@ Lokale App-URL:
 - Genehmigungen mit überschneidenden Diensten oder Terminen werden mit einer read-only Konfliktliste abgelehnt; es erfolgt keine automatische Löschung.
 - Gruppen stammen aus demselben kanonischen Vertrag wie AD Kalender und AdPlaner: Fachrollen `ad-*` und getrennte Bereiche `ad-Bereich-*`; keine kombinierten Altgruppen als Datenquelle.
 - AD Urlaub ist die kanonische schreibende Urlaubsquelle. Die Jahresmatrix fasst dynamische ASN-Teams (`ad-ASN-<Code>`, optional `-Urlaub`) und die Organisationssichten Büro NOW, Büro Süd, PFK sowie Stab/Geschäftsführung/Leitung zusammen.
-- AdPlaner bindet seine Urlaubssicht an diese Quelle an. Seine bisherige Tabelle bleibt bis zu einer bewusst freigegebenen Bereinigung ausschließlich als Rückbaureserve bestehen; `adurlaub:import-adplaner` importiert idempotent.
+- AdPlaner bindet seine Urlaubssicht ausschließlich an diese Quelle an und besitzt keine parallele Urlaubspersistenz.
 - Der read-only Cross-App-Vertrag ist `OCA\LocalBase\Calendar\AbsenceQueryEvent` mit `AbsenceInterval`. AD Urlaub greift niemals direkt auf Tabellen anderer Apps zu.
 
 ## Architektur und Sicherheit

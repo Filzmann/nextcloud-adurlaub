@@ -58,14 +58,5 @@ final class VacationRepository {
 
     public function delete(int $id): void { $qb = $this->db->getQueryBuilder(); $qb->delete('adu_vacations')->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)))->executeStatement(); }
     public function existsForEmployee(string $employeeUid): bool { $qb = $this->db->getQueryBuilder(); $qb->select('id')->from('adu_vacations')->where($qb->expr()->eq('employee_uid', $qb->createNamedParameter($employeeUid)))->setMaxResults(1); return $qb->executeQuery()->fetchOne() !== false; }
-    public function importLegacy(array $row): bool {
-        $sourceId = (int)($row['id'] ?? 0); if ($sourceId < 1) return false;
-        $check = $this->db->getQueryBuilder(); $check->select('id')->from('adu_vacations')->where($check->expr()->eq('source_app', $check->createNamedParameter('adplaner')))->andWhere($check->expr()->eq('source_id', $check->createNamedParameter($sourceId, IQueryBuilder::PARAM_INT)))->setMaxResults(1);
-        if ($check->executeQuery()->fetchOne() !== false) return false;
-        $vacation = Vacation::get(['employeeUid'=>(string)$row['assistant_uid'],'startDate'=>(string)$row['date_from'],'endDate'=>(string)$row['date_to'],'status'=>(string)$row['status'],'note'=>(string)($row['note'] ?? '')]);
-        $id = $this->save($vacation, (string)($row['updated_by_uid'] ?? 'adplaner-import'));
-        $qb = $this->db->getQueryBuilder(); $qb->update('adu_vacations')->set('source_app', $qb->createNamedParameter('adplaner'))->set('source_id', $qb->createNamedParameter($sourceId, IQueryBuilder::PARAM_INT))->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)))->executeStatement();
-        return true;
-    }
     private function mapRow(array $row): array { return ['id' => (int)$row['id'], 'employeeUid' => (string)$row['employee_uid'], 'startDate' => (string)$row['start_date'], 'endDate' => (string)$row['end_date'], 'status' => (string)$row['status'], 'note' => (string)$row['note']]; }
 }

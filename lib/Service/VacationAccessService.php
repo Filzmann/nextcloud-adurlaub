@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace OCA\AdUrlaub\Service;
 
+use OCA\LocalBase\Organization\AdOrganizationDefinition;
 use OCA\LocalBase\Organization\AdOrganizationPermissionPolicy;
+use OCA\LocalBase\Organization\AdOrganizationSettingsService;
 use OCP\IGroupManager;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -12,8 +14,7 @@ use OCP\IUserSession;
 
 /** Zweck: Erzwingt Sichtbarkeit aller AD-Gruppen und minimale eigene/Admin-Schreibrechte. */
 final class VacationAccessService {
-    public const ROLE_GROUPS = ['ad-EB','ad-PFK','ad-Buero','ad-Stab-HR','ad-Stab-QMB','ad-GF-AS','ad-GF-Digi','ad-AsdGF-Digi','ad-Leitung-Finanzen-Lohn','ad-Finanzen-Lohn','ad-IT','ad-Sekretariat','ad-PDL','ad-BL','ad-StvBL'];
-    public function __construct(private IGroupManager $groups, private IUserSession $session, private IUserManager $users, private AdOrganizationPermissionPolicy $policy, private VacationSettingsService $settings) {}
+    public function __construct(private IGroupManager $groups, private IUserSession $session, private IUserManager $users, private AdOrganizationPermissionPolicy $policy, private VacationSettingsService $settings, private ?AdOrganizationSettingsService $organization = null) {}
     public function currentUser(): ?IUser { return $this->session->getUser(); }
     public function canView(): bool { return $this->currentUser() !== null; }
     public function canManage(string $employeeUid): bool { return $this->decide($employeeUid, true); }
@@ -23,13 +24,28 @@ final class VacationAccessService {
     /** @return list<array{uid:string,displayName:string,roles:list<string>,areas:list<string>,canManage:bool}> */
     public function visibleEmployees(): array {
         $users = [];
-        foreach (self::ROLE_GROUPS as $role) foreach ($this->groups->get($role)?->getUsers() ?? [] as $user) $users[$user->getUID()] = $user;
-        foreach ($this->groups->search('ad-ASN-') as $group) {
-            if (!preg_match('/^ad-ASN-.+/u', (string)$group->getGID())) continue;
+        $definition = $this->definition();
+        $roleGroups = $definition->roleGroupIds();
+        foreach ($roleGroups as $role) foreach ($this->groups->get($role)?->getUsers() ?? [] as $user) $users[$user->getUID()] = $user;
+        $teamPrefix = $definition->teamGroupPrefix();
+        foreach ($this->groups->search($teamPrefix) as $group) {
+            $groupId = (string)$group->getGID();
+            if (!str_starts_with($groupId, $teamPrefix) || $groupId === $teamPrefix) continue;
+            try {
+                $definition->normalizeTeamCode(substr($groupId, strlen($teamPrefix)));
+            } catch (\InvalidArgumentException) {
+                continue;
+            }
             foreach ($group->getUsers() as $user) $users[$user->getUID()] = $user;
         }
         $result = [];
-        foreach ($users as $user) { $ids = array_map('strval', $this->groups->getUserGroupIds($user)); $result[] = ['uid' => $user->getUID(), 'displayName' => $user->getDisplayName(), 'roles' => array_values(array_intersect(self::ROLE_GROUPS, $ids)), 'areas' => array_values(array_filter($ids, static fn(string $id): bool => str_starts_with($id, 'ad-Bereich-'))), 'canManage' => $this->canManage($user->getUID()), 'canApprove' => $this->canApprove($user->getUID())]; }
+        foreach ($users as $user) {
+            $ids = array_map('strval', $this->groups->getUserGroupIds($user));
+            $roles = array_values(array_intersect($roleGroups, $ids));
+            $hasAreaRole = array_filter($roles, $definition->roleIsAreaScopedByGroup(...)) !== [];
+            $areas = $hasAreaRole ? array_values(array_intersect($definition->areaGroupIds(), $ids)) : [];
+            $result[] = ['uid' => $user->getUID(), 'displayName' => $user->getDisplayName(), 'roles' => $roles, 'areas' => $areas, 'canManage' => $this->canManage($user->getUID()), 'canApprove' => $this->canApprove($user->getUID())];
+        }
         usort($result, static fn(array $a, array $b): int => strnatcasecmp($a['displayName'], $b['displayName']));
         return $result;
     }
@@ -42,13 +58,23 @@ final class VacationAccessService {
         if ($actor->getUID() === $employeeUid) return false;
         $sharedAsnTeams = array_intersect($this->asnTeamCodes($actorGroups), $this->asnTeamCodes($targetGroups));
         if ($sharedAsnTeams === []) return false;
-        if (in_array('ad-EB', $actorGroups, true)) return true;
-        return in_array(VacationSettingsService::ASN_PEER_GROUP, $this->settings->enabledPeerGroups(), true);
+        if (in_array($this->definition()->roleGroupId('eb'), $actorGroups, true)) return true;
+        return in_array($this->settings->asnPeerGroup(), $this->settings->enabledPeerGroups(), true);
     }
     private function groupIds(IUser $user): array { return array_map('strval', $this->groups->getUserGroupIds($user)); }
     private function asnTeamCodes(array $groupIds): array {
         $codes = [];
-        foreach ($groupIds as $groupId) if (str_starts_with($groupId, 'ad-ASN-')) $codes[] = preg_replace('/-Urlaub$/u', '', substr($groupId, 7));
+        $definition = $this->definition();
+        $prefix = $definition->teamGroupPrefix();
+        foreach ($groupIds as $groupId) {
+            if (!str_starts_with($groupId, $prefix) || $groupId === $prefix) continue;
+            try {
+                $codes[] = $definition->normalizeTeamCode(substr($groupId, strlen($prefix)));
+            } catch (\InvalidArgumentException) {
+            }
+        }
         return array_values(array_unique($codes));
     }
+
+    private function definition(): AdOrganizationDefinition { return $this->organization?->definition() ?? AdOrganizationDefinition::defaults(); }
 }

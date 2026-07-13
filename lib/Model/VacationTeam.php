@@ -16,7 +16,8 @@ final class VacationTeam {
         private string $code,
         private string $displayName,
         private string $category,
-        private array $employees
+        private array $employees,
+        private int $sortOrder = 0,
     ) {
         if ($id === '' || $displayName === '' || !in_array($category, ['asn', 'organization'], true)) {
             throw new InvalidArgumentException('Ungültiges Urlaubsteam.');
@@ -29,7 +30,8 @@ final class VacationTeam {
             (string)($data['code'] ?? ''),
             (string)($data['displayName'] ?? ''),
             (string)($data['category'] ?? ''),
-            is_array($data['employees'] ?? null) ? $data['employees'] : []
+            is_array($data['employees'] ?? null) ? $data['employees'] : [],
+            (int)($data['sortOrder'] ?? 0),
         );
     }
 
@@ -37,9 +39,10 @@ final class VacationTeam {
     public function code(): string { return $this->code; }
     public function displayName(): string { return $this->displayName; }
     public function employees(): array { return $this->employees; }
+    public function sortOrder(): int { return $this->sortOrder; }
     public function contains(string $uid): bool { return in_array($uid, array_column($this->employees, 'uid'), true); }
 
     public function toArray(): array {
-        return ['id' => $this->id, 'code' => $this->code, 'displayName' => $this->displayName, 'category' => $this->category, 'employees' => $this->employees];
+        return ['id' => $this->id, 'code' => $this->code, 'displayName' => $this->displayName, 'category' => $this->category, 'employees' => $this->employees, 'sortOrder' => $this->sortOrder];
     }
 }

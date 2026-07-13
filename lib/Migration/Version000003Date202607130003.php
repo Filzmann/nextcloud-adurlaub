@@ -9,7 +9,7 @@ use OCP\DB\ISchemaWrapper;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
-/** Zweck: Entfernt die nur fuer den einmaligen Vorproduktionsimport benoetigten Herkunftsfelder. */
+/** Zweck: Entfernt die nur für den einmaligen Vorproduktionsimport benötigten Herkunftsfelder. */
 final class Version000003Date202607130003 extends SimpleMigrationStep {
     public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
         /** @var ISchemaWrapper $schema */

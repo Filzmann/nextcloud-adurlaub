@@ -7,7 +7,8 @@ namespace OCA\AdUrlaub\Command;
 use DateTimeImmutable;
 use OCA\AdUrlaub\Model\Vacation;
 use OCA\AdUrlaub\Repository\VacationRepository;
-use OCA\AdUrlaub\Service\VacationAccessService;
+use OCA\LocalBase\Organization\AdOrganizationDefinition;
+use OCA\LocalBase\Organization\AdOrganizationSettingsService;
 use OCP\IGroupManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -15,11 +16,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /** Zweck: Erzeugt idempotent je kanonischer Fachgruppe mindestens einen neutralen Demo-Urlaub. */
 final class SeedDemoCommand extends Command {
-    public function __construct(private IGroupManager $groups, private VacationRepository $vacations) { parent::__construct(); }
+    public function __construct(private IGroupManager $groups, private VacationRepository $vacations, private ?AdOrganizationSettingsService $organization = null) { parent::__construct(); }
     protected function configure(): void { $this->setName('adurlaub:demo:seed')->setDescription('Erzeugt Urlaubsdemos für alle AD-Fachgruppen.'); }
     protected function execute(InputInterface $input, OutputInterface $output): int {
         $monday = new DateTimeImmutable('monday next week'); $created = 0; $covered = 0;
-        foreach (VacationAccessService::ROLE_GROUPS as $index => $groupId) {
+        $definition = $this->organization?->definition() ?? AdOrganizationDefinition::defaults();
+        foreach ($definition->roleGroupIds() as $index => $groupId) {
             $user = array_values($this->groups->get($groupId)?->getUsers() ?? [])[0] ?? null;
             if ($user === null) continue; $covered++;
             if ($this->vacations->existsForEmployee($user->getUID())) continue;

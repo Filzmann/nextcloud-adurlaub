@@ -39,6 +39,7 @@ namespace {
 
     $repositorySource = file_get_contents(__DIR__ . '/../lib/Repository/VacationRepository.php');
     if ($repositorySource === false) throw new RuntimeException('Urlaubs-Repository konnte nicht gelesen werden.');
+    if (!str_contains($repositorySource, '$qb->getLastInsertId()') || str_contains($repositorySource, 'db->lastInsertId')) throw new RuntimeException('Urlaube verwenden nicht den modernen QueryBuilder-ID-Vertrag.');
     foreach (["lte('start_date'", "gte('end_date'", "neq('id'", 'PARAM_INT'] as $contract) {
         if (!str_contains($repositorySource, $contract)) throw new RuntimeException("Überschneidungsabfrage fehlt: {$contract}");
     }

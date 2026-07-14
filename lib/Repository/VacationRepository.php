@@ -66,7 +66,7 @@ final class VacationRepository {
         else $qb->update('adu_vacations')->where($qb->expr()->eq('id', $qb->createNamedParameter($vacation->id(), IQueryBuilder::PARAM_INT)));
         foreach ($values as $field => $value) { $parameter = $qb->createNamedParameter($value, $types[$field]); if ($insert) $qb->setValue($field, $parameter); else $qb->set($field, $parameter); }
         $qb->executeStatement();
-        return $vacation->id() ?? (int)$this->db->lastInsertId('adu_vacations');
+        return $vacation->id() ?? $qb->getLastInsertId();
     }
 
     public function delete(int $id): void { $qb = $this->db->getQueryBuilder(); $qb->delete('adu_vacations')->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)))->executeStatement(); }

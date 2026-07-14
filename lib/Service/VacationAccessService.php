@@ -12,21 +12,59 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
 
-/** Zweck: Erzwingt Mitgliedschafts-/Hierarchiesicht sowie eigene, Leitungs- und freigeschaltete Peer-Schreibrechte. */
+/**
+ * Zweck: Erzwingt Mitgliedschafts-/Hierarchiesicht sowie eigene, Leitungs- und freigeschaltete Peer-Schreibrechte.
+ * Zusammenspiel: API -> VacationAccessService -> zentrale Organisationspolicy, Sichtbarkeitspolicy und persönliche Freigaben.
+ * Vertrag: Deny by default; Selbst-, Peer-, Team- und Leitungsrechte werden ausschließlich aus dem aktuellen Konto abgeleitet.
+ */
 final class VacationAccessService {
-    public function __construct(private IGroupManager $groups, private IUserSession $session, private IUserManager $users, private AdOrganizationPermissionPolicy $policy, private VacationVisibilityPolicy $visibility, private VacationSettingsService $settings, private ?AdOrganizationSettingsService $organization = null) {}
-    public function currentUser(): ?IUser { return $this->session->getUser(); }
-    public function canView(): bool { return $this->currentUser() !== null; }
-    public function canManage(string $employeeUid): bool { return $this->decide($employeeUid, true); }
-    public function canApprove(string $employeeUid): bool { return $this->decide($employeeUid, false); }
-    public function canManageStatus(string $employeeUid, string $status): bool { return $status === 'approved' ? $this->canApprove($employeeUid) : $this->canManage($employeeUid); }
+    public function __construct(
+        private IGroupManager $groups,
+        private IUserSession $session,
+        private IUserManager $users,
+        private AdOrganizationPermissionPolicy $policy,
+        private VacationVisibilityPolicy $visibility,
+        private VacationSettingsService $settings,
+        private ?AdOrganizationSettingsService $organization = null,
+    ) {}
+
+    public function currentUser(): ?IUser {
+        return $this->session->getUser();
+    }
+
+    public function canView(): bool {
+        return $this->currentUser() !== null;
+    }
+
+    public function canManage(string $employeeUid): bool {
+        return $this->decide($employeeUid, true);
+    }
+
+    public function canApprove(string $employeeUid): bool {
+        return $this->decide($employeeUid, false);
+    }
+
+    public function canManageStatus(string $employeeUid, string $status): bool {
+        return $status === 'approved'
+            ? $this->canApprove($employeeUid)
+            : $this->canManage($employeeUid);
+    }
+
     public function isVisibleEmployee(string $employeeUid): bool {
         $actor = $this->currentUser();
         $target = $this->users->get($employeeUid);
         if ($actor === null || $target === null) return false;
-        return $this->visibility->canView($actor->getUID(), $this->groups->isAdmin($actor->getUID()), $this->groupIds($actor), $target->getUID(), $this->groupIds($target));
+
+        return $this->visibility->canView(
+            $actor->getUID(),
+            $this->groups->isAdmin($actor->getUID()),
+            $this->groupIds($actor),
+            $target->getUID(),
+            $this->groupIds($target),
+        );
     }
-    /** @return list<array{uid:string,displayName:string,roles:list<string>,areas:list<string>,canManage:bool}> */
+
+    /** @return list<array{uid:string,displayName:string,roles:list<string>,areas:list<string>,canManage:bool,canApprove:bool}> */
     public function visibleEmployees(): array {
         $actor = $this->currentUser();
         if ($actor === null) return [];
@@ -35,7 +73,12 @@ final class VacationAccessService {
         $users = [];
         $definition = $this->definition();
         $roleGroups = $definition->roleGroupIds();
-        foreach ($roleGroups as $role) foreach ($this->groups->get($role)?->getUsers() ?? [] as $user) $users[$user->getUID()] = $user;
+        foreach ($roleGroups as $role) {
+            foreach ($this->groups->get($role)?->getUsers() ?? [] as $user) {
+                $users[$user->getUID()] = $user;
+            }
+        }
+
         $teamPrefix = $definition->teamGroupPrefix();
         foreach ($this->groups->search($teamPrefix) as $group) {
             $groupId = (string)$group->getGID();
@@ -45,33 +88,64 @@ final class VacationAccessService {
             } catch (\InvalidArgumentException) {
                 continue;
             }
-            foreach ($group->getUsers() as $user) $users[$user->getUID()] = $user;
+            foreach ($group->getUsers() as $user) {
+                $users[$user->getUID()] = $user;
+            }
         }
+
         $result = [];
         foreach ($users as $user) {
             $ids = array_map('strval', $this->groups->getUserGroupIds($user));
             if (!$this->visibility->canView($actor->getUID(), $isAdmin, $actorGroups, $user->getUID(), $ids)) continue;
+
             $roles = array_values(array_intersect($roleGroups, $ids));
             $hasAreaRole = array_filter($roles, $definition->roleIsAreaScopedByGroup(...)) !== [];
             $areas = $hasAreaRole ? array_values(array_intersect($definition->areaGroupIds(), $ids)) : [];
-            $result[] = ['uid' => $user->getUID(), 'displayName' => $user->getDisplayName(), 'roles' => $roles, 'areas' => $areas, 'canManage' => $this->canManage($user->getUID()), 'canApprove' => $this->canApprove($user->getUID())];
+            $result[] = [
+                'uid' => $user->getUID(),
+                'displayName' => $user->getDisplayName(),
+                'roles' => $roles,
+                'areas' => $areas,
+                'canManage' => $this->canManage($user->getUID()),
+                'canApprove' => $this->canApprove($user->getUID()),
+            ];
         }
         usort($result, static fn(array $a, array $b): int => strnatcasecmp($a['displayName'], $b['displayName']));
+
         return $result;
     }
 
     private function decide(string $employeeUid, bool $allowSelf): bool {
-        $actor = $this->currentUser(); $target = $this->users->get($employeeUid);
+        $actor = $this->currentUser();
+        $target = $this->users->get($employeeUid);
         if ($actor === null || $target === null) return false;
-        $actorGroups = $this->groupIds($actor); $targetGroups = $this->groupIds($target);
-        if ($this->policy->canManage($actor->getUID(), $this->groups->isAdmin($actor->getUID()), $actorGroups, $employeeUid, $targetGroups, $this->settings->enabledPeerGroups(), $allowSelf)) return true;
+
+        $actorGroups = $this->groupIds($actor);
+        $targetGroups = $this->groupIds($target);
+        if ($this->policy->canManage(
+            $actor->getUID(),
+            $this->groups->isAdmin($actor->getUID()),
+            $actorGroups,
+            $employeeUid,
+            $targetGroups,
+            $this->settings->enabledPeerGroups(),
+            $allowSelf,
+        )) {
+            return true;
+        }
         if ($actor->getUID() === $employeeUid) return false;
+
         $sharedAsnTeams = array_intersect($this->asnTeamCodes($actorGroups), $this->asnTeamCodes($targetGroups));
         if ($sharedAsnTeams === []) return false;
         if (in_array($this->definition()->roleGroupId('eb'), $actorGroups, true)) return true;
+
         return in_array($this->settings->asnPeerGroup(), $this->settings->enabledPeerGroups(), true);
     }
-    private function groupIds(IUser $user): array { return array_map('strval', $this->groups->getUserGroupIds($user)); }
+
+    private function groupIds(IUser $user): array {
+        return array_map('strval', $this->groups->getUserGroupIds($user));
+    }
+
     private function asnTeamCodes(array $groupIds): array {
         $codes = [];
         $definition = $this->definition();
@@ -83,8 +157,11 @@ final class VacationAccessService {
             } catch (\InvalidArgumentException) {
             }
         }
+
         return array_values(array_unique($codes));
     }
 
-    private function definition(): AdOrganizationDefinition { return $this->organization?->definition() ?? AdOrganizationDefinition::defaults(); }
+    private function definition(): AdOrganizationDefinition {
+        return $this->organization?->definition() ?? AdOrganizationDefinition::defaults();
+    }
 }

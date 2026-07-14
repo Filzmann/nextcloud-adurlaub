@@ -47,6 +47,7 @@ Lokale App-URL:
 - Eigenständiges Git-Repository; gezielt stagen, nie `git add .`.
 - Vor Commits Status, Diff-Statistik und Dateiliste zeigen.
 - Schnelle Tests: `php tests/run.php` und `node tests/run-js.mjs`.
+- Authentifizierter DOM-/CSRF-/Überschneidungs-Smoke: `ADU_BASE_URL=... ADU_USER=... ADU_PASSWORD=... tests/http-smoke.sh`.
 - Migration/DI zusätzlich in DDEV prüfen.
 
 ## DDEV

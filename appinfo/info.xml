@@ -5,13 +5,14 @@
     <name>AD Urlaub</name>
     <summary>Urlaubsplanung für alle AD-Fachgruppen.</summary>
     <description>Plant und genehmigt ganztägige Urlaubszeiträume und stellt sie anderen lokalen Apps read-only bereit.</description>
-    <version>0.4.12</version>
+    <version>0.4.13-rc.1</version>
     <licence>agpl</licence>
-    <author>Simon / Codex-Prototyp</author>
+    <author>Simon</author>
     <namespace>AdUrlaub</namespace>
     <category>organization</category>
     <dependencies>
-        <nextcloud min-version="29" max-version="35"/>
+        <php min-version="8.3"/>
+        <nextcloud min-version="34" max-version="34"/>
         <app>localbase</app>
         <app>orgsuite</app>
     </dependencies>

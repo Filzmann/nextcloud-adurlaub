@@ -48,6 +48,7 @@ Lokale App-URL:
 - Vor Commits Status, Diff-Statistik und Dateiliste zeigen.
 - Schnelle Tests: `php tests/run.php` und `node tests/run-js.mjs`.
 - Authentifizierter DOM-/CSRF-/Überschneidungs-Smoke: `ADU_BASE_URL=... ADU_USER=... ADU_PASSWORD=... tests/http-smoke.sh`.
+- Selbstbereinigende DDEV-Rechtematrix: `tests/access-matrix-ddev-smoke.sh`.
 - Migration/DI zusätzlich in DDEV prüfen.
 
 ## DDEV

@@ -10,9 +10,9 @@
             this.client = client;
             this.notice = notice;
             this.location = location;
-            const ids = ['team', 'year', 'calendar-head', 'calendar-body', 'own-form', 'own-requests', 'conflicts', 'calendar-view', 'plan-title'];
+            const ids = ['team', 'year', 'calendar-head', 'calendar-body', 'own-form', 'own-requests', 'conflicts', 'calendar-view', 'plan-title', 'integration-status'];
             this.elements = Object.fromEntries(ids.map(id => [id, document.getElementById(`adu-${id}`)]));
-            this.state = { teams: [], teamId: '', year: new Date().getFullYear(), currentUser: null, plan: null };
+            this.state = { teams: [], teamId: '', year: new Date().getFullYear(), currentUser: null, plan: null, integrations: {} };
             this.plan = new window.AdUrlaub.components.VacationPlan({ elements: this.elements, state: this.state });
             this.bindEvents();
         }
@@ -26,6 +26,8 @@
                 const payload = await this.client.request('/api/teams');
                 this.state.teams = payload.teams || [];
                 this.state.currentUser = payload.currentUser || null;
+                this.state.integrations = payload.integrations || {};
+                this.renderIntegrationStatus();
                 const params = new URLSearchParams(this.location.search);
                 const requested = params.get('team');
                 this.state.teamId = this.state.teams.some(team => team.id === requested)
@@ -38,6 +40,15 @@
             } catch (error) {
                 this.notice.error(error);
             }
+        }
+
+        renderIntegrationStatus() {
+            const status = this.elements['integration-status'];
+            const automaticCheck = this.state.integrations.calendarConflictCheck?.available === true;
+            status.hidden = automaticCheck;
+            status.textContent = automaticCheck
+                ? ''
+                : 'AD Kalender ist nicht aktiv. Dienstkonflikte werden nicht automatisch geprüft.';
         }
 
         async loadYear() {

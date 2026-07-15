@@ -8,7 +8,7 @@ const plan = readFileSync(planUrl, 'utf8');
 const app = readFileSync(appUrl, 'utf8');
 const template = readFileSync(new URL('../templates/index.php', import.meta.url), 'utf8');
 const source = [main, plan, app, template].join('\n');
-for (const contract of ['adu-year-table', 'approved', 'data-action', 'set-status', 'client.request', '/api/teams/', 'requestFor', "['organization', 'Büros und Fachgruppen']", "document.createElement('optgroup')"]) if (!source.includes(contract)) throw new Error(`Frontendvertrag fehlt: ${contract}`);
+for (const contract of ['adu-year-table', 'approved', 'data-action', 'set-status', 'client.request', '/api/teams/', 'requestFor', "['organization', 'Büros und Fachgruppen']", "document.createElement('optgroup')", 'adu-integration-status', 'Dienstkonflikte werden nicht automatisch geprüft']) if (!source.includes(contract)) throw new Error(`Frontendvertrag fehlt: ${contract}`);
 for (const contract of ['class VacationPlan', 'renderChrome()', 'renderPlan()', 'renderOwnRequests()', 'showConflicts(error)']) if (!plan.includes(contract)) throw new Error(`Plan-Komponentenvertrag fehlt: ${contract}`);
 for (const contract of ['class VacationApp', 'bindEvents()', 'async loadYear()', 'async changeStatus(event)', 'async createOwn(event)', 'async deleteOwn(event)']) if (!app.includes(contract)) throw new Error(`App-Controller-Vertrag fehlt: ${contract}`);
 for (const contract of ["\\OCP\\Util::addScript('adurlaub', 'components/vacation-plan')", "\\OCP\\Util::addScript('adurlaub', 'modules/vacation-app')", "\\OCP\\Util::addScript('adurlaub', 'main')"]) if (!template.includes(contract)) throw new Error(`Skript-Reihenfolge fehlt: ${contract}`);

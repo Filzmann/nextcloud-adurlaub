@@ -34,12 +34,13 @@ Lokale App-URL:
 - App-Root und Tabellenwrapper erfüllen den Nextcloud-Scrollvertrag der Parent-`AGENTS.md`.
 - Modelle nutzen `get(...)`, `get_all([...])` und `toArray()`.
 - Im Frontend bleibt `main.js` ein schlanker Bootstrap. `VacationApp` orchestriert API, Zustand und Ereignisse; `VacationPlan` rendert Teamauswahl, Jahresmatrix, eigene Anträge und Konflikte ohne eigene API-Zugriffe.
-- Organisationsweite Gruppen- und Genehmigungsfreigaben liegen ausschließlich im Nextcloud-Adminbereich der OrgSuite. AD Urlaub besitzt derzeit keine persönlichen Dauer-Einstellungen und deshalb keinen leeren Einstellungstab.
+- Organisationsweite Gruppen- und Genehmigungsfreigaben liegen bei einer Einzelinstallation im Adminabschnitt von AD Urlaub, ab zwei AD-Produkten im Adminabschnitt der OrgSuite. AD Urlaub besitzt derzeit keine persönlichen Dauer-Einstellungen und deshalb keinen leeren Einstellungstab.
 
 ## Gemeinsame Suite-Navigation
 
-- AD Urlaub besitzt keinen eigenen Nextcloud-Hauptnavigationseintrag. `orgsuite` stellt den gemeinsamen Einstieg `AD` bereit.
-- Das Template bindet das zentrale OrgSuite-Menue mit `data-suite="ad"` und `data-current-app="adurlaub"` ein.
+- Ohne aktive OrgSuite registriert AD Urlaub einen eigenen Nextcloud-Hauptnavigationseintrag. Ab zwei AD-Produkten ersetzt `orgsuite` diesen durch den gemeinsamen Einstieg `AD`.
+- Das Template stellt den optionalen Menühost mit `data-suite="ad"` und `data-current-app="adurlaub"` bereit, lädt aber keine OrgSuite-Assets direkt.
+- Ohne AD Kalender bleibt Urlaubsplanung möglich; lediglich die automatische Prüfung gegen Dienste und Termine entfällt. Dieser Standalone-Zustand ist kein Fehler.
 - Urlaubs-, Team- und Genehmigungsrechte bleiben ausschliesslich serverseitig im AD Urlaub; Menuesichtbarkeit ist keine Berechtigung.
 
 ## Git und Tests

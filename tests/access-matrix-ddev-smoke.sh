@@ -4,7 +4,8 @@ set -euo pipefail
 base_url="${ADU_BASE_URL:-https://nextcloud-dev.ddev.site}"
 ddev_project="${ADU_DDEV_PROJECT:-$(cd "$(dirname "$0")/../../nextcloud-dev" && pwd)}"
 suffix="$(date +%s)-$$"
-password="Adu-Smoke-${suffix}!"
+# Nur im Arbeitsspeicher vorhandenes Einmalpasswort für alle temporären Matrix-Konten.
+password="$(php -r 'echo bin2hex(random_bytes(24));')"
 team_code="Smoke$$"
 team_group="ad-ASN-$team_code"
 created_users=()

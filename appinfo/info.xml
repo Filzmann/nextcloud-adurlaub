@@ -18,4 +18,8 @@
         <nextcloud min-version="34" max-version="34"/>
     </dependencies>
     <commands><command>OCA\AdUrlaub\Command\SeedDemoCommand</command></commands>
+    <settings>
+        <admin>OCA\AdUrlaub\Settings\Admin</admin>
+        <admin-section>OCA\AdUrlaub\Settings\AdminSection</admin-section>
+    </settings>
 </info>

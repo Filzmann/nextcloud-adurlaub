@@ -3,6 +3,7 @@ import { execFileSync } from 'node:child_process';
 const mainUrl = new URL('../js/main.js', import.meta.url);
 const planUrl = new URL('../js/components/vacation-plan.js', import.meta.url);
 const appUrl = new URL('../js/modules/vacation-app.js', import.meta.url);
+const adminUrl = new URL('../js/admin.js', import.meta.url);
 const main = readFileSync(mainUrl, 'utf8');
 const plan = readFileSync(planUrl, 'utf8');
 const app = readFileSync(appUrl, 'utf8');
@@ -15,5 +16,5 @@ for (const contract of ["\\OCP\\Util::addScript('adurlaub', 'components/vacation
 for (const removed of ['/api/settings', 'adu-tab-settings', "showView('settings')"]) if (source.includes(removed)) throw new Error(`Organisationsweite Einstellung liegt noch im Urlaubs-Frontend: ${removed}`);
 if (!app.includes('const formElement = event.currentTarget') || !app.includes('formElement.reset()') || app.includes('event.currentTarget.reset()')) throw new Error('Urlaubsformular verliert seinen Formularbezug nach dem asynchronen Speichern.');
 if (!main.includes('new window.AdUrlaub.modules.VacationApp') || !main.includes('.start()')) throw new Error('main.js ist kein schlanker Bootstrap.');
-for (const url of [mainUrl, planUrl, appUrl]) execFileSync('node', ['--check', url.pathname], {stdio:'inherit'});
+for (const url of [mainUrl, planUrl, appUrl, adminUrl]) execFileSync('node', ['--check', url.pathname], {stdio:'inherit'});
 console.log('AD Urlaub JavaScript tests passed');

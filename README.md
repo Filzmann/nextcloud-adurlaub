@@ -18,3 +18,5 @@ sudo -u www-data php occ app:enable adurlaub
 ```
 
 Der Befehl `adurlaub:demo:seed` erzeugt synthetische Testdaten und wird nicht automatisch ausgeführt.
+
+Installations-, Betriebs- und Abnahmeunterlagen stehen im öffentlichen [AD-Suite-Projekt](https://github.com/Filzmann/ad-suite).

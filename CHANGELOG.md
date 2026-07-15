@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.0-rc.1
+
+- Eigenständige Navigation ohne OrgSuite ergänzt.
+- Abwesenheitsfähigkeit über den optionalen LocalBase-Integrationsvertrag veröffentlicht.
+- Sichtbarer Standalone-Hinweis ergänzt, wenn die automatische Kalenderkonfliktprüfung fehlt.
+
 ## 0.4.14-rc.1
 
 - Öffentliche Projekt-, Quellcode- und Fehlerkanäle ergänzt.

@@ -1,12 +1,10 @@
 <?php
 \OCP\Util::addScript('localbase', 'api/api-client');
 \OCP\Util::addScript('localbase', 'ui/ui');
-\OCP\Util::addScript('orgsuite', 'suite-navigation');
 \OCP\Util::addScript('adurlaub', 'components/vacation-plan');
 \OCP\Util::addScript('adurlaub', 'modules/vacation-app');
 \OCP\Util::addScript('adurlaub', 'main');
 \OCP\Util::addStyle('adurlaub', 'style');
-\OCP\Util::addStyle('orgsuite', 'suite-navigation');
 ?>
 <main id="adurlaub-app" class="adu-app">
     <div class="orgsuite-host" data-orgsuite data-suite="ad" data-current-app="adurlaub"></div>
@@ -18,6 +16,7 @@
         </div>
     </header>
     <div id="adu-notice" role="status" aria-live="polite"></div>
+    <p id="adu-integration-status" class="adu-integration-status" role="status" hidden></p>
     <section id="adu-calendar-view" class="adu-section" aria-labelledby="adu-plan-title">
         <header class="adu-section-head">
             <h2 id="adu-plan-title">Urlaubsplan</h2>

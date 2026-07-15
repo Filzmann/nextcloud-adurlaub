@@ -6,16 +6,14 @@ Urlaubsplanung für Assistenzteams und organisatorische AD-Fachgruppen. Geplante
 
 - Nextcloud 34
 - PHP 8.3 oder neuer innerhalb des von Nextcloud 34 unterstützten Bereichs
-- Abhängigkeiten: `localbase`, `orgsuite`
+- Laufzeitbasis: `localbase`; `orgsuite` ist ab zwei AD-Fachprodukten optional aktiv
 - App-ID und Installationsordner: `adurlaub`
 
 ## Installation
 
-```bash
-sudo -u www-data php occ app:enable localbase
-sudo -u www-data php occ app:enable orgsuite
-sudo -u www-data php occ app:enable adurlaub
-```
+Für Staging und Auslieferung das Produktbundle `ad-product-adurlaub-<release>.tar.gz` und dessen enthaltenes `install.sh` verwenden. Es prüft und installiert LocalBase automatisch; ab dem zweiten AD-Fachprodukt aktiviert es OrgSuite.
+
+AD Urlaub funktioniert einzeln. Ohne AD Kalender bleibt die Urlaubsplanung vollständig nutzbar; die automatische Prüfung genehmigter Urlaube gegen Dienste und Termine entfällt und wird sichtbar erklärt.
 
 Der Befehl `adurlaub:demo:seed` erzeugt synthetische Testdaten und wird nicht automatisch ausgeführt.
 

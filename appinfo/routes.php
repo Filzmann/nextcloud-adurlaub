@@ -9,4 +9,5 @@ return ['routes' => [
     ['name' => 'api#create', 'url' => '/api/vacations', 'verb' => 'POST'],
     ['name' => 'api#update', 'url' => '/api/vacations/{id}', 'verb' => 'PUT'],
     ['name' => 'api#delete', 'url' => '/api/vacations/{id}', 'verb' => 'DELETE'],
+    ['name' => 'demo_admin#install', 'url' => '/api/admin/demo-pack/install', 'verb' => 'POST'],
 ]];

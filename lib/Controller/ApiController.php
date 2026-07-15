@@ -8,6 +8,7 @@ use DateTimeImmutable;
 use OCA\AdUrlaub\AppInfo\Application;
 use OCA\AdUrlaub\Exception\VacationConflictException;
 use OCA\AdUrlaub\Exception\VacationOverlapException;
+use OCA\AdUrlaub\Service\IntegrationStatusService;
 use OCA\AdUrlaub\Service\VacationAccessService;
 use OCA\AdUrlaub\Service\VacationService;
 use OCA\AdUrlaub\Service\VacationTeamService;
@@ -30,6 +31,7 @@ final class ApiController extends Controller {
         private VacationAccessService $access,
         private VacationService $vacations,
         private VacationTeamService $teams,
+        private IntegrationStatusService $integrations,
         private LoggerInterface $logger,
     ) {
         parent::__construct(Application::APP_ID, $request);
@@ -61,6 +63,9 @@ final class ApiController extends Controller {
         return new JSONResponse([
             'teams' => array_map(static fn($team): array => $team->toArray(), $this->teams->all()),
             'currentUser' => ['uid' => $this->access->currentUser()?->getUID() ?? ''],
+            'integrations' => [
+                'calendarConflictCheck' => $this->integrations->calendarConflictCheck(),
+            ],
         ]);
     }
 

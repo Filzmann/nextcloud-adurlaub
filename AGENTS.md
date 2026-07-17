@@ -34,7 +34,7 @@ Lokale App-URL:
 - Jeder schreibende API-Pfad prüft serverseitig Zielperson und Besitz/Adminrecht. UI-Ausblendungen sind kein Schutz.
 - Auch lesende Team-, Jahres- und Wochenendpunkte liefern nur den durch `VacationVisibilityPolicy` erlaubten Personen- und Ansichtsausschnitt; direkte Requests auf andere Teams bleiben gesperrt.
 - Urlaubsnotizen verbleiben in AD Urlaub und werden nicht an konsumierende Apps übertragen.
-- App-Root und Tabellenwrapper erfüllen den Nextcloud-Scrollvertrag der Parent-`AGENTS.md`.
+- App-Root und Tabellenwrapper erfüllen den im lokalen Skill `work-in-nextcloud-app` vollständig beschriebenen Nextcloud-Scrollvertrag.
 - Modelle nutzen `get(...)`, `get_all([...])` und `toArray()`.
 - Im Frontend bleibt `main.js` ein schlanker Bootstrap. `VacationApp` orchestriert API, Zustand und Ereignisse; `VacationPlan` rendert Teamauswahl, Jahresmatrix, eigene Anträge und Konflikte ohne eigene API-Zugriffe.
 - Organisationsweite Gruppen- und Genehmigungsfreigaben liegen bei einer Einzelinstallation im Adminabschnitt von AD Urlaub, ab zwei AD-Produkten im Adminabschnitt der OrgSuite. AD Urlaub besitzt derzeit keine persönlichen Dauer-Einstellungen und deshalb keinen leeren Einstellungstab.
@@ -48,8 +48,8 @@ Lokale App-URL:
 
 ## Git und Tests
 
-- Eigenständiges Git-Repository; gezielt stagen, nie `git add .`.
-- Vor Commits Status, Diff-Statistik und Dateiliste zeigen.
+- Eigenständiges Git-Repository. Diese Datei und lokal referenzierte Skills bilden bei einem direkten Start die vollständige Repository-Steuerung.
+- Fuer Git-, Sandbox-, DDEV-/`occ`-Sicherheit, Verifikation und Learning Candidates gilt der lokal mitgefuehrte Skill `work-in-nextcloud-app`; die folgenden Urlaubs-Pruefungen ergaenzen ihn.
 - Schnelle Tests: `php tests/run.php` und `node tests/run-js.mjs`.
 - Authentifizierter DOM-/CSRF-/Überschneidungs-Smoke: `ADU_BASE_URL=... ADU_USER=... ADU_PASSWORD=... tests/http-smoke.sh`.
 - Selbstbereinigende DDEV-Rechtematrix: `tests/access-matrix-ddev-smoke.sh`.
@@ -58,5 +58,3 @@ Lokale App-URL:
 ## DDEV
 
 Mount: `/var/www/html/html/custom_apps/adurlaub`
-
-Migrationen laufen über `occ app:enable adurlaub` beziehungsweise `occ upgrade`.

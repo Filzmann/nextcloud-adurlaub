@@ -22,6 +22,7 @@ Die priorisierte Produktplanung und offene Entscheidungen stehen in `ROADMAP.md`
 - Gruppen stammen aus derselben konfigurierbaren `AdOrganizationDefinition` wie AD Kalender und AdPlaner. Fachrollen, Bereiche, Assistenzteam-Präfix und Organisationssichten werden nicht zusätzlich in AD Urlaub festverdrahtet.
 - AD Urlaub ist die kanonische schreibende Urlaubsquelle. Die Jahresmatrix fasst dynamische Assistenzteams und die konfigurierten Organisationssichten zusammen.
 - Büro Nordost, Büro West und Büro Süd sind eigenständig auswählbare Organisationssichten. Bereichsübergreifende Leitungen erscheinen durch ihre Bereichsmitgliedschaften in jeder passenden Sicht, ohne die Büros zusammenzufassen.
+- Die Pflegeansicht enthält Stv. PDL, Büroorganisation Pflege und PFK in dieser Reihenfolge. Stv. PDL darf Büroorganisation Pflege und PFK führen; PDL bleibt beiden übergeordnet. Fahrzeugverwaltung und Empfang bilden eigene globale Ansichten und folgen der gemeinsamen GF-Digi-/Sekretariats-Hierarchie.
 - Assistenzteams verwenden dieselbe Nextcloud-Gruppe wie AdPlaner. Separate Gruppen mit einem Suffix wie `-Urlaub` sind keine unterstützte Datenquelle.
 - Eigene Urlaubszeiträume werden kompakt über Von/Bis/Notiz eingetragen. Berechtigte Koordinator*innen wechseln den Tagesstatus direkt in der Jahresmatrix; Konflikte werden inline angezeigt.
 - AdPlaner bindet seine Urlaubssicht ausschließlich an diese Quelle an und besitzt keine parallele Urlaubspersistenz.

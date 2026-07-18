@@ -8,6 +8,8 @@ Lokale App-URL:
 
     https://nextcloud-dev.ddev.site/apps/adurlaub/
 
+Die priorisierte Produktplanung und offene Entscheidungen stehen in `ROADMAP.md`; verbindliche Fach-, Sicherheits- und Architekturregeln bleiben in dieser Datei.
+
 ## Fachvertrag
 
 - Urlaube sind ganztägige, inklusive Datumsbereiche je Nextcloud-UID.

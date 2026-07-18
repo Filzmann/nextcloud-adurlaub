@@ -17,4 +17,8 @@ AD Urlaub funktioniert einzeln. Ohne AD Kalender bleibt die Urlaubsplanung volls
 
 Der Befehl `adurlaub:demo:seed` erzeugt synthetische Testdaten und wird nicht automatisch ausgeführt.
 
+## Roadmap
+
+Geplante Erweiterungen und offene Produktentscheidungen stehen in der [Roadmap](ROADMAP.md).
+
 Installations-, Betriebs- und Abnahmeunterlagen stehen im öffentlichen [AD-Suite-Projekt](https://github.com/Filzmann/ad-suite).

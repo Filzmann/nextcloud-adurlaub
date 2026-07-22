@@ -10,7 +10,7 @@
             this.client = client;
             this.notice = notice;
             this.location = location;
-            const ids = ['team', 'year', 'calendar-head', 'calendar-body', 'own-form', 'own-requests', 'conflicts', 'calendar-view', 'plan-title', 'integration-status'];
+            const ids = ['team', 'year', 'calendar-head', 'calendar-body', 'own-form', 'own-requests', 'conflicts', 'calendar-view', 'plan-title', 'integration-status', 'holiday-status'];
             this.elements = Object.fromEntries(ids.map(id => [id, document.getElementById(`adu-${id}`)]));
             this.state = { teams: [], teamId: '', year: new Date().getFullYear(), currentUser: null, plan: null, integrations: {} };
             this.plan = new window.AdUrlaub.components.VacationPlan({ elements: this.elements, state: this.state });

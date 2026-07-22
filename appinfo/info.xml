@@ -5,7 +5,7 @@
     <name>AD Urlaub</name>
     <summary>Urlaubsplanung für alle AD-Fachgruppen.</summary>
     <description>Plant und genehmigt ganztägige Urlaubszeiträume und stellt sie anderen lokalen Apps read-only bereit.</description>
-    <version>0.5.0-rc.2</version>
+    <version>0.5.0-rc.4</version>
     <licence>agpl</licence>
     <author>Simon</author>
     <website>https://github.com/Filzmann/ad-suite</website>
@@ -17,6 +17,9 @@
         <php min-version="8.3"/>
         <nextcloud min-version="34" max-version="34"/>
     </dependencies>
+    <background-jobs>
+        <job>OCA\AdUrlaub\BackgroundJob\RefreshHolidayCalendarJob</job>
+    </background-jobs>
     <commands><command>OCA\AdUrlaub\Command\SeedDemoCommand</command></commands>
     <settings>
         <admin>OCA\AdUrlaub\Settings\Admin</admin>

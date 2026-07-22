@@ -1,6 +1,7 @@
 <?php
 \OCP\Util::addScript('localbase', 'api/api-client');
 \OCP\Util::addScript('localbase', 'ui/ui');
+\OCP\Util::addScript('adurlaub', 'models/holiday-calendar');
 \OCP\Util::addScript('adurlaub', 'components/vacation-plan');
 \OCP\Util::addScript('adurlaub', 'modules/vacation-app');
 \OCP\Util::addScript('adurlaub', 'main');
@@ -20,8 +21,10 @@
     <section id="adu-calendar-view" class="adu-section" aria-labelledby="adu-plan-title">
         <header class="adu-section-head">
             <h2 id="adu-plan-title">Urlaubsplan</h2>
-            <p class="adu-legend"><span class="adu-request adu-request-planned">U?</span> geplant, Hinweis <span class="adu-request adu-request-approved">U</span> genehmigt, blockiert Kalenderzeiten</p>
+            <p class="adu-legend"><span class="adu-request adu-request-planned">U?</span> geplant, Hinweis <span class="adu-request adu-request-approved">U</span> genehmigt, blockiert Kalenderzeiten <span class="adu-school-holiday-legend"><span class="adu-school-holiday-swatch" aria-hidden="true"></span> Berliner Schulferien</span> <span class="adu-public-holiday-legend"><span class="adu-public-holiday-swatch" aria-hidden="true"></span> gesetzliche Feiertage</span></p>
         </header>
+        <p id="adu-holiday-status" class="adu-holiday-status" role="status" aria-live="polite"></p>
+        <p class="adu-holiday-source">Quelle: <a href="https://www.openholidaysapi.org/" target="_blank" rel="noopener noreferrer">OpenHolidays API</a>, Datenlizenz ODbL.</p>
         <form id="adu-own-form" class="adu-vacation-form">
             <label>Von <input name="startDate" type="date" required></label>
             <label>Bis <input name="endDate" type="date" required></label>

@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { runInNewContext } from 'node:vm';
 
 const holidaySource = readFileSync(new URL('../../js/models/holiday-calendar.js', import.meta.url), 'utf8');
@@ -28,8 +29,8 @@ const context = {
     },
     Date,
 };
-runInNewContext(holidaySource, context);
-runInNewContext(planSource, context);
+runInNewContext(holidaySource, context, { filename: fileURLToPath(new URL('../../js/models/holiday-calendar.js', import.meta.url)) });
+runInNewContext(planSource, context, { filename: fileURLToPath(new URL('../../js/components/vacation-plan.js', import.meta.url)) });
 
 const holidays = new context.window.AdUrlaub.models.HolidayCalendar({
     year: 2026,

@@ -2,6 +2,10 @@
 
 Urlaubsplanung für Assistenzteams und organisatorische AD-Fachgruppen. Geplante Urlaube werden als Hinweis, genehmigte Urlaube als blockierende Abwesenheit an andere Apps geliefert.
 
+Die Jahresmatrix zeigt Schulferien und gesetzliche Feiertage der organisationsweit konfigurierten Region als getrennte read-only Ebenen. Im fixierten Tabellenkopf bildet jeder zusammenhängende Zeitraum einen flachen farbigen Streifen mit Namen. Beschriftungen verändern die feste Breite der Tagesspalten nicht; zu lange Namen werden gekürzt und bleiben als Tooltip vollständig verfügbar. Samstage sind leicht grau, Sonntage dunkler; gesetzliche Feiertage färben ihre vollständige Spalte mit derselben Grauebene wie Sonntage. Heiligabend und Silvester sind als eigene Jahresendtage farblich und textlich von gesetzlichen Feiertagen abgegrenzt. Urlaubsfarben bleiben darunter erkennbar. LocalBase lädt die Daten anhand des gemeinsamen Kalenderkontexts aus der [OpenHolidays API](https://www.openholidaysapi.org/) und nutzt sie unter der ODbL. `DE-BE` und `Europe/Berlin` bleiben Bestandsdefaults. Normalisierte Jahresstände liegen regionsgebunden als AppConfig in der Nextcloud-Datenbank. Sie werden täglich und bei Bedarf erneuert; bei einem Dienstausfall bleibt der letzte gültige Stand sichtbar und wird als veraltet gekennzeichnet.
+
+Der Zugriff verwendet ausschließlich die fest hinterlegte HTTPS-Adresse der OpenHolidays API und benötigt keinen Schlüssel. Beim ersten Aufruf eines noch nicht gecachten Jahres kann die externe Abfrage synchron erfolgen. Der gemeinsame Nextcloud-Hintergrundjob `OCA\LocalBase\BackgroundJob\RefreshHolidayCalendarJob` hält das aktuelle und die zwei folgenden Jahre vorab aktuell.
+
 ## Staging-Kompatibilität
 
 - Nextcloud 34

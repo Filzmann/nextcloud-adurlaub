@@ -9,6 +9,8 @@ Lokale App-URL:
     https://nextcloud-dev.ddev.site/apps/adurlaub/
 
 Die priorisierte Produktplanung und offene Entscheidungen stehen in `ROADMAP.md`; verbindliche Fach-, Sicherheits- und Architekturregeln bleiben in dieser Datei.
+Der ausführliche geltende Ist-Vertrag steht in `docs/architecture.md`; diese
+Datei hält die bei jeder Arbeit benötigten Grenzen und Prüfungen.
 
 ## Fachvertrag
 
@@ -21,6 +23,7 @@ Die priorisierte Produktplanung und offene Entscheidungen stehen in `ROADMAP.md`
 - Genehmigungen mit überschneidenden Diensten oder Terminen werden mit einer read-only Konfliktliste abgelehnt; es erfolgt keine automatische Löschung.
 - Gruppen stammen aus derselben konfigurierbaren `AdOrganizationDefinition` wie AD Kalender und AdPlaner. Fachrollen, Bereiche, Assistenzteam-Präfix und Organisationssichten werden nicht zusätzlich in AD Urlaub festverdrahtet.
 - AD Urlaub ist die kanonische schreibende Urlaubsquelle. Die Jahresmatrix fasst dynamische Assistenzteams und die konfigurierten Organisationssichten zusammen.
+- Die Jahresmatrix zeigt Schulferien und gesetzliche Feiertage der organisationsweit konfigurierten Kalenderregion stets als read-only Hintergrundebenen. Fixierte Bänder im Tabellenkopf tragen über jedem zusammenhängenden Zeitraum den Namen, ohne einzelne Tagesspalten zu verbreitern; zu lange Namen werden gekürzt und bleiben vollständig als Tooltip und zugängliche Beschriftung verfügbar. Samstage sind leicht grau, Sonntage dunkler grau; gesetzliche Feiertage markieren ihre vollständige Spalte mit derselben Grauebene wie Sonntage. Heiligabend und Silvester erhalten unabhängig davon eine eigene, vom gesetzlichen Feiertag unterscheidbare Spaltenmarkierung. Die zugängliche Tagesbeschriftung nennt Wochenendart, Jahresendtag, Ferien und Feiertage zusätzlich in Textform. AD Urlaub liest den validierten, dynamischen OpenHolidays-Jahresstand ausschließlich über den gemeinsamen read-only LocalBase-Vertrag; `DE`, `DE-BE` und `Europe/Berlin` bleiben Bestandsdefaults. Der gemeinsame Cache wird täglich sowie bedarfsgesteuert aktualisiert; bei einem Dienstausfall bleibt der letzte gültige Stand mit sichtbarem Veraltet-Hinweis verfügbar. Ferien und Feiertage verändern weder Konflikte, Verfügbarkeit, Genehmigungen noch Rechte.
 - Büro Nordost, Büro West und Büro Süd sind eigenständig auswählbare Organisationssichten. Bereichsübergreifende Leitungen erscheinen durch ihre Bereichsmitgliedschaften in jeder passenden Sicht, ohne die Büros zusammenzufassen.
 - Die Pflegeansicht enthält Stv. PDL, Büroorganisation Pflege und PFK in dieser Reihenfolge. Stv. PDL darf Büroorganisation Pflege und PFK führen; PDL bleibt beiden übergeordnet. Fahrzeugverwaltung und Empfang bilden eigene globale Ansichten und folgen der gemeinsamen GF-Digi-/Sekretariats-Hierarchie.
 - Assistenzteams verwenden dieselbe Nextcloud-Gruppe wie AdPlaner. Separate Gruppen mit einem Suffix wie `-Urlaub` sind keine unterstützte Datenquelle.

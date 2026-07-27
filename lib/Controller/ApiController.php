@@ -9,6 +9,7 @@ use OCA\AdUrlaub\AppInfo\Application;
 use OCA\AdUrlaub\Exception\VacationConflictException;
 use OCA\AdUrlaub\Exception\VacationOverlapException;
 use OCA\AdUrlaub\Service\IntegrationStatusService;
+use OCA\AdUrlaub\Service\HolidayCalendarService;
 use OCA\AdUrlaub\Service\VacationAccessService;
 use OCA\AdUrlaub\Service\VacationService;
 use OCA\AdUrlaub\Service\VacationTeamService;
@@ -32,6 +33,7 @@ final class ApiController extends Controller {
         private VacationService $vacations,
         private VacationTeamService $teams,
         private IntegrationStatusService $integrations,
+        private HolidayCalendarService $holidays,
         private LoggerInterface $logger,
     ) {
         parent::__construct(Application::APP_ID, $request);
@@ -77,7 +79,9 @@ final class ApiController extends Controller {
         if ($team === null) return new JSONResponse(['error' => 'Team nicht gefunden.'], Http::STATUS_NOT_FOUND);
 
         try {
-            return new JSONResponse($this->vacations->year($team, $year, $this->access));
+            $data = $this->vacations->year($team, $year, $this->access);
+            $data['holidays'] = $this->holidays->forYear($year);
+            return new JSONResponse($data);
         } catch (\Throwable $error) {
             $this->logger->error('Urlaubsjahr konnte nicht geladen werden.', ['exception' => $error]);
             return new JSONResponse(['error' => 'Das Urlaubsjahr konnte nicht geladen werden.'], Http::STATUS_BAD_REQUEST);

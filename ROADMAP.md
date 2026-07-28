@@ -2,6 +2,24 @@
 
 Diese Datei bündelt geplante Erweiterungen und offene Produktentscheidungen. Verbindliche Fach-, Sicherheits- und Architekturregeln stehen in `AGENTS.md`.
 
+## Freigegebene Umsetzungsaufgaben
+
+### ADU-L10N – AD Urlaub vollständig lokalisieren
+
+Status: als l10n-Pilot geeignet
+
+- Manuelle Monats- und Wochenendnamen sowie sichtbare UI-, Konflikt-,
+  Validierungs- und Fehlermeldungen auf aktive Nextcloud-Locale und
+  Nextcloud-l10n umstellen.
+- ISO-Datumsbereiche, Urlaubsstatus, Rollen-/Bereichsschlüssel und
+  Providerpayloads unverändert lassen; Ferien- und Feiertagsnamen nur gemäß
+  ihrer belastbaren Provider-/Locale-Quelle darstellen.
+- Deutsche Ausgabe, eine weitere Locale, Fallback, Jahresgrenzen,
+  Pluralformen, Platzhalter, Escaping und zugängliche Tagesbeschriftungen
+  testen.
+- Erst nach vollständiger Pilotmigration den app-eigenen Rohtext-Check
+  verbindlich schalten.
+
 ## Aktueller Fokus
 
 - Jahresmatrix, eigene Anträge, Genehmigungshierarchie und Bereichsgrenzen auf einem realitätsnahen Staging fachlich abnehmen.

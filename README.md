@@ -25,4 +25,8 @@ Der Befehl `adurlaub:demo:seed` erzeugt synthetische Testdaten und wird nicht au
 
 Geplante Erweiterungen und offene Produktentscheidungen stehen in der [Roadmap](ROADMAP.md).
 
+Für die fachliche, visuelle und sicherheitsbezogene Staging-Prüfung steht ein
+ausfüllbares [manuelles Abnahmeformular](docs/manual-acceptance.md) bereit.
+Urlaubsdetails und personenbezogene Echtdaten werden darin nicht dokumentiert.
+
 Installations-, Betriebs- und Abnahmeunterlagen stehen im öffentlichen [AD-Suite-Projekt](https://github.com/Filzmann/ad-suite).

@@ -28,6 +28,21 @@ Ergebniskennzeichnung: `[ ] erfolgreich` / `[ ] nicht erfolgreich` /
 `[ ] nicht geprüft`. Bei „nicht erfolgreich“ oder „nicht geprüft“ ist eine
 Begründung verpflichtend.
 
+## Automatisierter Vorabstand am 08.08.2026
+
+Für `0.6.0-rc.2` sind die vollständigen PHP- und JavaScript-Suiten, der
+authentifizierte selbstbereinigende HTTP-Smoke, die reale DDEV-Rechtematrix
+sowie das isolierte Fresh-/Upgrade-Migrationsschema grün. Die Matrix deckt
+positive und negative Sicht-, Bearbeitungs- und Genehmigungsbeziehungen für
+PDL, BL, Büroorganisation, PFK, EB und Assistenzteam ab. Der gemeinsame
+AD-Kalender-/Urlaubsvertrag wurde zusätzlich durch den realen
+Default-Shift-/Abwesenheits-Smoke des AD Kalenders nachgewiesen.
+
+Diese Nachweise füllen das folgende manuelle Formular nicht automatisch aus.
+Insbesondere Sichtkontrolle, Tastaturführung, persönlicher Zeitzonenfall,
+Provider-Ausfallbilder und die fachliche Gesamtentscheidung bleiben manuell
+abzunehmen.
+
 ## A. Einstieg, Ansichten und Jahresmatrix
 
 | ID | Was wird geprüft? | Auszuführende Schritte | Erwartetes Ergebnis | Ergebnis | Warum/Beleg/Abweichung |

@@ -2,11 +2,12 @@
 
 Diese Datei bündelt geplante Erweiterungen und offene Produktentscheidungen. Verbindliche Fach-, Sicherheits- und Architekturregeln stehen in `AGENTS.md`.
 
-## Freigegebene Umsetzungsaufgaben
+## Zukunftsplanung – nicht freigegeben
 
 ### ADU-L10N – AD Urlaub vollständig lokalisieren
 
-Status: als l10n-Pilot geeignet
+Status: später, nicht freigegeben; Pilot-App, Reihenfolge und Rohtext-Gate
+werden vor jeder Umsetzung appübergreifend separat freigegeben
 
 - Manuelle Monats- und Wochenendnamen sowie sichtbare UI-, Konflikt-,
   Validierungs- und Fehlermeldungen auf aktive Nextcloud-Locale und

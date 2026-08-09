@@ -29,7 +29,7 @@ Datei hält die bei jeder Arbeit benötigten Grenzen und Prüfungen.
 - Assistenzteams verwenden dieselbe Nextcloud-Gruppe wie AdPlaner. Separate Gruppen mit einem Suffix wie `-Urlaub` sind keine unterstützte Datenquelle.
 - Eigene Urlaubszeiträume werden kompakt über Von/Bis/Notiz eingetragen. Berechtigte Koordinator*innen wechseln den Tagesstatus direkt in der Jahresmatrix; Konflikte werden inline angezeigt.
 - AdPlaner bindet seine Urlaubssicht ausschließlich an diese Quelle an und besitzt keine parallele Urlaubspersistenz.
-- Der read-only Cross-App-Vertrag ist `OCA\LocalBase\Calendar\AbsenceQueryEvent` mit `AbsenceInterval`. AD Urlaub greift niemals direkt auf Tabellen anderer Apps zu.
+- Die read-only Cross-App-Verträge sind die bounded UID-Abfrage `OCA\LocalBase\Calendar\AbsenceEmployeeDiscoveryEvent` sowie `AbsenceQueryEvent` mit `AbsenceInterval`. Die Discovery liefert nur Konten mit geplanten oder genehmigten Urlauben im angefragten halboffenen Zeitraum; Urlaubsnotizen bleiben ausgeschlossen. AD Urlaub greift niemals direkt auf Tabellen anderer Apps zu.
 - Der app-eigene Adminabschnitt bietet einen ausschließlich manuell bestätigten Demo-Pack. Er verwendet die gemeinsamen synthetischen Suite-Demokonten, niemals zufällig ausgewählte reale Gruppenmitglieder.
 - Fremde oder LDAP-verwaltete Konten werden nicht als Demokonto übernommen; read-only LDAP-Gruppen brechen die Demo-Installation im Preflight vor jeder Mutation ab.
 - WordPress-Bestandsdaten werden nicht importiert. Es existiert keine Legacy-Importstrecke.

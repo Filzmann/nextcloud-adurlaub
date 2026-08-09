@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 if (!defined('OC_CONSOLE')) define('OC_CONSOLE', true);
 require dirname(__DIR__, 4) . '/lib/base.php';
-require_once __DIR__ . '/../../lib/Migration/Version000001Date202607130001.php';
-require_once __DIR__ . '/../../lib/Migration/Version000003Date202607130003.php';
 
 use Doctrine\DBAL\Schema\Schema;
 use OCA\AdUrlaub\Migration\Version000001Date202607130001;

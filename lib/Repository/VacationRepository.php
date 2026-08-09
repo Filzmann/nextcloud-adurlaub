@@ -17,6 +17,32 @@ use OCP\IDBConnection;
 final class VacationRepository {
     public function __construct(private IDBConnection $db) {}
 
+    /** @return list<string> */
+    public function findEmployeeUidsInRange(string $startDate, string $endDate): array {
+        $qb = $this->db->getQueryBuilder();
+        $qb
+            ->select('employee_uid')
+            ->from('adu_vacations')
+            ->where($qb->expr()->lte('start_date', $qb->createNamedParameter($endDate)))
+            ->andWhere($qb->expr()->gte('end_date', $qb->createNamedParameter($startDate)))
+            ->andWhere($qb->expr()->in(
+                'status',
+                $qb->createNamedParameter([Vacation::STATUS_PLANNED, Vacation::STATUS_APPROVED], IQueryBuilder::PARAM_STR_ARRAY),
+            ))
+            ->groupBy('employee_uid')
+            ->orderBy('employee_uid', 'ASC');
+
+        $employeeUids = array_values(array_unique(array_filter(
+            array_map(
+                static fn(mixed $employeeUid): string => trim((string)$employeeUid),
+                $qb->executeQuery()->fetchFirstColumn(),
+            ),
+            static fn(string $employeeUid): bool => $employeeUid !== '',
+        )));
+        sort($employeeUids, SORT_STRING);
+        return $employeeUids;
+    }
+
     /** @return list<Vacation> */
     public function findRange(string $startDate, string $endDate, array $employeeUids): array {
         if ($employeeUids === []) return [];

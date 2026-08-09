@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace OCA\AdUrlaub\AppInfo;
 
+use OCA\AdUrlaub\Listener\AbsenceEmployeeDiscoveryListener;
 use OCA\AdUrlaub\Listener\AbsenceQueryListener;
 use OCA\AdUrlaub\Listener\IntegrationCapabilityQueryListener;
 use OCA\AdUrlaub\Listener\StandaloneNavigationListener;
+use OCA\LocalBase\Calendar\AbsenceEmployeeDiscoveryEvent;
 use OCA\LocalBase\Calendar\AbsenceQueryEvent;
 use OCA\LocalBase\Integration\IntegrationCapabilityQueryEvent;
 use OCP\AppFramework\App;
@@ -20,6 +22,7 @@ final class Application extends App implements IBootstrap {
     public const APP_ID = 'adurlaub';
     public function __construct(array $urlParams = []) { parent::__construct(self::APP_ID, $urlParams); }
     public function register(IRegistrationContext $context): void {
+        $context->registerEventListener(AbsenceEmployeeDiscoveryEvent::class, AbsenceEmployeeDiscoveryListener::class);
         $context->registerEventListener(AbsenceQueryEvent::class, AbsenceQueryListener::class);
         $context->registerEventListener(IntegrationCapabilityQueryEvent::class, IntegrationCapabilityQueryListener::class);
         $context->registerEventListener(LoadAdditionalEntriesEvent::class, StandaloneNavigationListener::class);

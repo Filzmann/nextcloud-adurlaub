@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.0-rc.1
+
+- Subjectgebundene persönliche Datenauskunft für eigene Urlaubszeiträume einschließlich eigener Notizen ergänzt.
+- Konfigurierbare, ausschließlich lesende Retention-Vorschau mit `REVIEW`-Kandidaten eingeführt; sie löscht und verändert keine Daten.
+
 ## 0.6.0-rc.2
 
 - Ferien- und Feiertagsdaten auf den gemeinsamen, ausfallsicheren LocalBase-Kalendervertrag umgestellt und den früheren app-eigenen Refreshjob entfernt.

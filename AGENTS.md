@@ -36,6 +36,14 @@ Datei hält die bei jeder Arbeit benötigten Grenzen und Prüfungen.
 
 ## Architektur und Sicherheit
 
+- AD Urlaub registriert subjectgebundene PersonalData- und Retention-Provider
+  über die öffentlichen LocalBase-Registry-Events. Die Auskunft enthält nur
+  Urlaube der typisierten UID einschließlich eigener Notizen; fremde Notizen
+  werden niemals übernommen. Retention liefert ausschließlich
+  administrativ konfigurierte `REVIEW`-Kandidaten und verändert keine Daten.
+- Jeder eigene Urlaubszeitraum erscheint menschenlesbar mit Zeitraum, Zweck
+  und einer aus der aktuellen Retention-Regel abgeleiteten Aussage. Ein
+  REVIEW-Stichtag wird nicht als automatische Löschfrist dargestellt.
 - Controller bleiben dünn; Rechte liegen in `VacationAccessService`, Fachlogik in `VacationService`, Datenzugriff im Repository.
 - Jeder schreibende API-Pfad prüft serverseitig Zielperson und Besitz/Adminrecht. UI-Ausblendungen sind kein Schutz.
 - Auch lesende Team-, Jahres- und Wochenendpunkte liefern nur den durch `VacationVisibilityPolicy` erlaubten Personen- und Ansichtsausschnitt; direkte Requests auf andere Teams bleiben gesperrt.
